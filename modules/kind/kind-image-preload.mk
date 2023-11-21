@@ -33,12 +33,12 @@ images_tar_dir := $(bin_dir)/downloaded/containers/$(HOST_ARCH)
 images_tars := $(images_files:%=$(images_tar_dir)/%.tar)
 
 $(images_tars): $(images_tar_dir)/%.tar: | $(NEEDS_CRANE)
-	@$(eval IMAGE=$(subst +,:,$*))
-	@$(eval IMAGE_WITHOUT_DIGEST=$(shell cut -d@ -f1 <<<"$(IMAGE)"))
-	@$(eval DIGEST=$(subst $(IMAGE_WITHOUT_DIGEST)@,,$(IMAGE)))
+	@$(eval image=$(subst +,:,$*))
+	@$(eval image_without_digest=$(shell cut -d@ -f1 <<<"$(image)"))
+	@$(eval digest=$(subst $(image_without_digest)@,,$(image)))
 	@mkdir -p $(dir $@)
-	diff <(echo "$(DIGEST)  -" | cut -d: -f2) <($(CRANE) manifest $(IMAGE) | sha256sum)
-	$(CRANE) pull $(IMAGE_WITHOUT_DIGEST) $@ --platform=linux/$(HOST_ARCH)
+	diff <(echo "$(digest)  -" | cut -d: -f2) <($(CRANE) manifest $(image) | sha256sum)
+	$(CRANE) pull $(image_without_digest) $@ --platform=linux/$(HOST_ARCH)
 
 images_tar_envs := $(images_files:%=env-%)
 
