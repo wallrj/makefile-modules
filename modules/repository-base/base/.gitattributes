@@ -1,4 +1,5 @@
 deploy/charts/*/README.md linguist-generated=true
+deploy/charts/*/templates/crd-*.yaml linguist-generated=true
 docs/api/api.md linguist-generated=true
 make/_shared/** linguist-generated=true
 

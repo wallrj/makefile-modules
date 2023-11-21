@@ -41,9 +41,9 @@ generate-crds: | $(NEEDS_CONTROLLER-GEN)
 	echo "Updating CRDs with helm templating, writing to $(helm_chart_source_dir)/templates"
 
 	for i in $$(ls $(crds_gen_temp)); do \
-	echo "{{ if .Values.crds.enabled }}" > $(helm_chart_source_dir)/templates/$$i; \
-	cat $(crds_gen_temp)/$$i >> $(helm_chart_source_dir)/templates/$$i; \
-	echo "{{ end }}" >> $(helm_chart_source_dir)/templates/$$i; \
+	echo "{{ if .Values.crds.enabled }}" > $(helm_chart_source_dir)/templates/crd-$$i; \
+	cat $(crds_gen_temp)/$$i >> $(helm_chart_source_dir)/templates/crd-$$i; \
+	echo "{{ end }}" >> $(helm_chart_source_dir)/templates/crd-$$i; \
 	done
 
 shared_generate_targets += generate-crds
