@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-images_amd64 ?=
-images_arm64 ?=
-
-images_amd64 += docker.io/kindest/node:v1.27.3@sha256:9dd3392d79af1b084671b05bcf65b21de476256ad1dcc853d9f3b10b4ac52dde
-images_arm64 += docker.io/kindest/node:v1.27.3@sha256:de0b3dfe848ccf07e24f4278eaf93edb857b6231b39773f46b36a2b1a6543ae9
+cert_manager_crds := $(bin_dir)/scratch/cert-manager-crds.yaml
+$(cert_manager_crds): | $(bin_dir)/scratch
+	curl -sSLo $@ https://github.com/cert-manager/cert-manager/releases/download/$(cert_manager_version)/cert-manager.crds.yaml
