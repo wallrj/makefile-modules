@@ -84,7 +84,7 @@ TOOLS += gomarkdoc=v1.1.0
 TOOLS += oras=v1.1.0
 # https://pkg.go.dev/github.com/onsi/ginkgo/v2/ginkgo?tab=versions
 TOOLS += ginkgo=$(shell awk '/ginkgo\/v2/ {print $$2}' go.mod)
-# https://pkg.go.dev/github.com/go418/klone?tab=versions
+# https://pkg.go.dev/github.com/cert-manager/klone?tab=versions
 TOOLS += klone=v0.0.1-alpha.1
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
@@ -251,7 +251,7 @@ GO_DEPENDENCIES += cosign=github.com/sigstore/cosign/v2/cmd/cosign
 GO_DEPENDENCIES += boilersuite=github.com/cert-manager/boilersuite
 GO_DEPENDENCIES += gomarkdoc=github.com/princjef/gomarkdoc/cmd/gomarkdoc
 GO_DEPENDENCIES += oras=oras.land/oras/cmd/oras
-GO_DEPENDENCIES += klone=github.com/go418/klone
+GO_DEPENDENCIES += klone=github.com/cert-manager/klone
 
 define go_dependency
 $$(bin_dir)/downloaded/tools/$1@$($(call UC,$1)_VERSION)_%: | $$(NEEDS_GO) $$(bin_dir)/downloaded/tools
