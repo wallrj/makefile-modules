@@ -30,7 +30,7 @@ endif
 ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 ## @category [shared] Generate/ Verify
 generate-deepcopy: | $(NEEDS_CONTROLLER-GEN)
-	$(eval directories := $(shell ls -d */ | grep -v '_bin'))
+	$(eval directories := $(shell ls -d */ | grep -v '_bin' | grep -v 'make'))
 	$(CONTROLLER-GEN) object:headerFile=$(go_header_file) $(directories:%=paths=./%...)
 
 shared_generate_targets += generate-deepcopy
