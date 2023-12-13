@@ -85,7 +85,7 @@ TOOLS += oras=v1.1.0
 # https://pkg.go.dev/github.com/onsi/ginkgo/v2/ginkgo?tab=versions
 TOOLS += ginkgo=$(shell awk '/ginkgo\/v2/ {print $$2}' go.mod)
 # https://pkg.go.dev/github.com/cert-manager/klone?tab=versions
-TOOLS += klone=v0.0.1-alpha.1
+TOOLS += klone=v0.0.1
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
 K8S_CODEGEN_VERSION=v0.28.2
