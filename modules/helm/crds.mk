@@ -31,11 +31,12 @@ endif
 ## @category [shared] Generate/ Verify
 generate-crds: | $(NEEDS_CONTROLLER-GEN)
 	$(eval crds_gen_temp := $(bin_dir)/scratch/crds)
+	$(eval directories := $(shell ls -d */ | grep -v '_bin'))
 
 	mkdir -p $(crds_gen_temp)
 
 	$(CONTROLLER-GEN) crd \
-		paths="./..." \
+		$(directories:%=paths=./%...) \
 		output:crd:artifacts:config=$(crds_gen_temp)
 	
 	echo "Updating CRDs with helm templating, writing to $(helm_chart_source_dir)/templates"
