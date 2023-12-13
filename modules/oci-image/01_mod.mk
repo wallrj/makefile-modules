@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-oci_platforms := linux/amd64,linux/arm64
+oci_platforms := all
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
@@ -99,6 +99,8 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 
 	KOCACHE=$(bin_dir)/scratch/image/ko_cache \
 	KO_CONFIG_PATH=$(CURDIR)/$(oci_layout_path).ko_config.yaml \
+	SOURCE_DATE_EPOCH=$(GITEPOCH) \
+	KO_GO_PATH=$(GO) \
 	LDFLAGS="$(go_$*_ldflags)" \
 	CGO_ENABLED=$(CGO_ENABLED) \
 	$(KO) build $(go_$*_source_path) \
@@ -151,6 +153,7 @@ $(oci_maybe_push_targets): oci-maybe-push-%: | $(NEEDS_CRANE)
 .PHONY: $(oci_load_targets)
 ## Load docker image.
 ## @category [shared] Build
+$(oci_load_targets): oci_platforms := ""
 $(oci_load_targets): oci-load-%: oci-build-% | kind-cluster $(NEEDS_KIND)
 	$(eval oci_layout_path := $(bin_dir)/scratch/image/oci-layout-$*.$(oci_$*_image_tag))
 

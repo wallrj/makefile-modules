@@ -45,6 +45,7 @@ endif
 
 VERSION ?= $(shell git describe --tags --always --match='v*' --abbrev=14 --dirty)
 GITCOMMIT := $(shell git rev-parse HEAD)
+GITEPOCH := $(shell git show -s --format=%ct HEAD)
 
 ##################################
 # Global variables and dirs      #
