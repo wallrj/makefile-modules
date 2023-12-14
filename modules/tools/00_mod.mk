@@ -96,7 +96,12 @@ TOOLS += etcd=$(KUBEBUILDER_ASSETS_VERSION)
 TOOLS += kube-apiserver=$(KUBEBUILDER_ASSETS_VERSION)
 
 # https://go.dev/dl/
-VENDORED_GO_VERSION := $(shell awk '/^go / {print $$2}' go.mod)
+VENDORED_GO_VERSION := 1.21.5
+
+# Print the go version which can be used in GH actions
+.PHONY: print-go-version
+print-go-version:
+	@echo result=$(VENDORED_GO_VERSION)
 
 # When switching branches which use different versions of the tools, we
 # need a way to re-trigger the symlinking from $(bin_dir)/downloaded to $(bin_dir)/tools.

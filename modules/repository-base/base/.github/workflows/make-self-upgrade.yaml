@@ -25,9 +25,13 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - id: go-version
+        run: |
+          make print-go-version >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-go@v4
         with:
-          go-version-file: go.mod
+          go-version: ${{ steps.go-version.outputs.result }}
 
       - run: |
           git checkout -B "self-upgrade"
