@@ -53,7 +53,7 @@ TOOLS += yq=v4.34.1
 # https://github.com/ko-build/ko/releases
 TOOLS += ko=0.14.1
 # https://github.com/protocolbuffers/protobuf/releases
-TOOLS += protoc=23.4
+TOOLS += protoc=25.0
 
 ### go packages
 # https://pkg.go.dev/sigs.k8s.io/controller-tools/cmd/controller-gen?tab=versions
@@ -426,9 +426,9 @@ $(bin_dir)/downloaded/tools/ko@$(KO_VERSION)_%: | $(bin_dir)/downloaded/tools
 # protoc #
 ##########
 
-PROTOC_linux_amd64_SHA256SUM=0502f286ac9ed860b629a7965a14527b1f2dd131e4283fa23c2d7f184672aa9a
-PROTOC_darwin_amd64_SHA256SUM=07e5fdcf1b0708d3367dc5e6eb8d135de7e407d75316c93155cfd8ab362eec80
-PROTOC_darwin_arm64_SHA256SUM=8c7afae8626b6811e7b5897d16d940c2dbf50b1e135ed958a01db6566bdda726
+PROTOC_linux_amd64_SHA256SUM=d26c4efe0eae3066bb560625b33b8fc427f55bd35b16f246b7932dc851554e67
+PROTOC_darwin_amd64_SHA256SUM=15eefb30ba913e8dc4dd21d2ccb34ce04a2b33124f7d9460e5fd815a5d6459e3
+PROTOC_darwin_arm64_SHA256SUM=76a997df5dacc0608e880a8e9069acaec961828a47bde16c06116ed2e570588b
 
 $(bin_dir)/downloaded/tools/protoc@$(PROTOC_VERSION)_%: | $(bin_dir)/downloaded/tools
 	$(CURL) https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/protoc-$(PROTOC_VERSION)-$(subst darwin,osx,$(subst arm64,aarch_64,$(subst amd64,x86_64,$(subst _,-,$*)))).zip -o $@.zip
