@@ -56,6 +56,12 @@ bin_dir := _bin
 $(bin_dir) $(bin_dir)/scratch:
 	mkdir -p $@
 
+.PHONY: clean
+## Clean all temporary files
+## @category [shared] Tools
+clean:
+	rm -rf $(bin_dir)
+
 ##################################
 # Include all the Makefiles      #
 ##################################
