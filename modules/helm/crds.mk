@@ -29,22 +29,21 @@ endif
 .PHONY: generate-crds
 ## Generate CRD manifests.
 ## @category [shared] Generate/ Verify
-generate-crds: | $(NEEDS_CONTROLLER-GEN)
+generate-crds: | $(NEEDS_CONTROLLER-GEN) $(NEEDS_YQ)
 	$(eval crds_gen_temp := $(bin_dir)/scratch/crds)
 	$(eval directories := $(shell ls -d */ | grep -v '_bin' | grep -v 'make'))
 
+	rm -rf $(crds_gen_temp)
 	mkdir -p $(crds_gen_temp)
 
 	$(CONTROLLER-GEN) crd \
 		$(directories:%=paths=./%...) \
 		output:crd:artifacts:config=$(crds_gen_temp)
-	
+
 	echo "Updating CRDs with helm templating, writing to $(helm_chart_source_dir)/templates"
 
-	for i in $$(ls $(crds_gen_temp)); do \
-	echo "{{ if .Values.crds.enabled }}" > $(helm_chart_source_dir)/templates/crd-$$i; \
-	cat $(crds_gen_temp)/$$i >> $(helm_chart_source_dir)/templates/crd-$$i; \
-	echo "{{ end }}" >> $(helm_chart_source_dir)/templates/crd-$$i; \
+	@for i in $$(ls $(crds_gen_temp)); do \
+		$(YQ) $(crds_gen_temp)/$$i > $(helm_chart_source_dir)/templates/crd-$$i; \
 	done
 
 shared_generate_targets += generate-crds
