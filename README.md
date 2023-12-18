@@ -42,3 +42,10 @@ The order in which the makefiles are includes is as follows (see [Makefile](./mo
 -include make/02_mod.mk
 -include make/_shared/*/02_mod.mk
 ```
+
+### Upgrading the tools in the tools module
+
+1. bump the versions in the modules/tools/00_mod.mk file
+2. run `make tools-learn-sha`
+
+See [Makefile](./Makefile) for more details.
