@@ -29,15 +29,32 @@ SHELL := /usr/bin/env bash
 .SUFFIXES:
 FORCE:
 
+HOST_OS ?= $(shell uname -s | tr A-Z a-z)
+HOST_ARCH ?= $(shell uname -m)
+ifeq (x86_64, $(HOST_ARCH))
+	HOST_ARCH = amd64
+endif
+
 bin_dir := _bin
 
-$(bin_dir):
+$(bin_dir) $(bin_dir)/scratch:
 	mkdir -p $@
 
-include modules/tools/00_mod.mk
+include modules/**/00_mod.mk
+
+.PHONY: images-learn-sha
+images-learn-sha: $(bin_dir) | $(NEEDS_CRANE)
+	rm -rf ./$(bin_dir)/downloaded/images/
+	mkdir -p ./$(bin_dir)/scratch/
+
+	IMAGES_AMD64="$(images_amd64)" \
+	IMAGES_ARM64="$(images_arm64)" \
+	CRANE=$(CRANE) \
+		./scripts/images_learn_sha.sh
 
 .PHONY: help
 help: ## Show this help
 	@echo "Usage: make [target] ..."
 	@echo
 	@echo "make tools-learn-sha"
+	@echo "make images-learn-sha"
