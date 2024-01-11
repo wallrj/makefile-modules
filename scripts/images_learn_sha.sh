@@ -30,7 +30,7 @@ for image in $images_amd64; do
         continue
     fi
 
-    learn_data+=("s|$find|$replace|g\n")
+    learn_data+=("s|$find|$replace|g")
 done
 
 for image in $images_arm64; do
@@ -42,7 +42,7 @@ for image in $images_arm64; do
         continue
     fi
 
-    learn_data+=("s|$find|$replace|g\n")
+    learn_data+=("s|$find|$replace|g")
 done
 
 module_files=$(find ./modules/ -maxdepth 2 -name "00_mod.mk" -type f)
