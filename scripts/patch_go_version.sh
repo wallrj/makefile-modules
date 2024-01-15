@@ -4,7 +4,7 @@ set -eu -o pipefail
 
 TMPDIR=$(mktemp -d)
 
-trap 'rm -f -- "$TMPDIR"' EXIT
+trap 'rm -r -f -- "$TMPDIR"' EXIT
 
 # Download version data
 curl --silent --show-error --fail --location --retry 10 --retry-connrefused https://go.dev/dl/?mode=json > $TMPDIR/version.json
@@ -19,12 +19,13 @@ NEW_VERSION=$(<$TMPDIR/version.json jq -r ".[] | select(.version? | match(\"$MAJ
 if [[ $NEW_VERSION == "" ]]; then
 	echo "failed to fetch the latest version of go $MAJOR_MINOR_VERSION.*"
 	echo "this could mean the go version is very old or that go versioning has changed"
+	echo "this is likely to require manual intervention"
 	exit 1
 fi
 
 # Check if there's nothing to do
 if [[ $NEW_VERSION == $LOCAL_VERSION ]]; then
-	echo "go version is up to date; exiting"
+	echo "go version is up to date"
 	exit 0
 fi
 
@@ -32,4 +33,4 @@ TARGET=modules/tools/00_mod.mk
 
 echo "updating go version to $NEW_VERSION in $TARGET"
 
-sed -i '' "s/^VENDORED_GO_VERSION := $LOCAL_VERSION$/VENDORED_GO_VERSION := $NEW_VERSION/" $TARGET
+sed -i "s/^VENDORED_GO_VERSION := $LOCAL_VERSION$/VENDORED_GO_VERSION := $NEW_VERSION/" $TARGET
