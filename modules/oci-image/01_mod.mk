@@ -82,6 +82,7 @@ ARGS ?= # default empty
 ## Run a controller from your host.
 ## @category [shared] Build
 $(run_targets): run-%: | $(NEEDS_GO)
+	CGO_ENABLED=$(CGO_ENABLED) \
 	$(GO) run \
 		-ldflags '$(go_$*_ldflags)' \
 		$(go_$*_source_path) $(ARGS)
