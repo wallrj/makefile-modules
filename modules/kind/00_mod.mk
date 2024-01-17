@@ -17,7 +17,7 @@ images_arm64 ?=
 
 kind_version := v1.29.0
 
-# Goto https://github.com/kubernetes-sigs/kind/releases/tag/v0.20.0 and find the
+# Goto https://github.com/kubernetes-sigs/kind/releases/tag/<KIND-VERSION> and find the
 # multi-arch digest for the image you want to use. Then use crane to get the platform
 # specific digest. For example (digest is the multi-arch digest from the release page):
 # digest="sha256:eaa1450915475849a73a9227b8f201df25e55e268e5d619312131292e324d570"
