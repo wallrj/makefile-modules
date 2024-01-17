@@ -21,9 +21,11 @@
 
 ###################################################################################
 
+# See https://tech.davis-hansson.com/p/make/ for more information
+# about these initial lines.
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 SHELL := /usr/bin/env bash
-.SHELLFLAGS := -uo pipefail -c
+.SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help
 .DELETE_ON_ERROR:
 .SUFFIXES:
