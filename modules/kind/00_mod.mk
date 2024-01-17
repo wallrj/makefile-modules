@@ -15,7 +15,7 @@
 images_amd64 ?=
 images_arm64 ?=
 
-kind_version := v1.29.0
+kind_k8s_version := v1.29.0
 
 # Goto https://github.com/kubernetes-sigs/kind/releases/tag/<KIND-VERSION> and find the
 # multi-arch digest for the image you want to use. Then use crane to get the platform
@@ -24,5 +24,5 @@ kind_version := v1.29.0
 # crane digest --platform=linux/amd64 docker.io/kindest/node@$digest
 # crane digest --platform=linux/arm64 docker.io/kindest/node@$digest
 
-images_amd64 += docker.io/kindest/node:$(kind_version)@sha256:54a50c9354f11ce0aa56a85d2cacb1b950f85eab3fe1caf988826d1f89bf37eb
-images_arm64 += docker.io/kindest/node:$(kind_version)@sha256:8ccbd8bc4d52c467f3c79eeeb434827c225600a1d7385a4b1c19d9e038c9e0c0
+images_amd64 += docker.io/kindest/node:$(kind_k8s_version)@sha256:54a50c9354f11ce0aa56a85d2cacb1b950f85eab3fe1caf988826d1f89bf37eb
+images_arm64 += docker.io/kindest/node:$(kind_k8s_version)@sha256:8ccbd8bc4d52c467f3c79eeeb434827c225600a1d7385a4b1c19d9e038c9e0c0
