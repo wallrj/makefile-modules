@@ -93,7 +93,7 @@ $(run_targets): run-%: | $(NEEDS_GO)
 $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_dir)/scratch/image
 	$(eval oci_layout_path := $(bin_dir)/scratch/image/oci-layout-$*.$(oci_$*_image_tag))
 	rm -rf $(CURDIR)/$(oci_layout_path)
-	
+
 	echo '{}' | \
 		$(YQ) '.defaultBaseImage = "$(oci_$*_base_image)"' | \
 		$(YQ) '.builds[0].id = "$*"' | \
