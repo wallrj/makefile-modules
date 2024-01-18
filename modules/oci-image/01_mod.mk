@@ -57,6 +57,7 @@ $(foreach build_name,$(build_names),$(eval $(call check_variables,$(build_name))
 RELEASE_DRYRUN ?= false
 
 CGO_ENABLED ?= 0
+GOEXPERIMENT ?=  # empty by default
 
 oci_build_targets := $(build_names:%=oci-build-%)
 oci_push_targets := $(build_names:%=oci-push-%)
@@ -77,6 +78,7 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 		$(YQ) '.builds[0].id = "$*"' | \
 		$(YQ) '.builds[0].main = "$(go_$*_source_path)"' | \
 		$(YQ) '.builds[0].env[0] = "CGO_ENABLED={{.Env.CGO_ENABLED}}"' | \
+		$(YQ) '.builds[0].env[1] = "GOEXPERIMENT={{.Env.GOEXPERIMENT}}"' | \
 		$(YQ) '.builds[0].ldflags[0] = "-s"' | \
 		$(YQ) '.builds[0].ldflags[1] = "-w"' | \
 		$(YQ) '.builds[0].ldflags[2] = "{{.Env.LDFLAGS}}"' \
@@ -88,6 +90,7 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 	KO_GO_PATH=$(GO) \
 	LDFLAGS="$(go_$*_ldflags)" \
 	CGO_ENABLED=$(CGO_ENABLED) \
+	GOEXPERIMENT=$(GOEXPERIMENT) \
 	$(KO) build $(go_$*_source_path) \
 		--platform=$(oci_platforms) \
 		--oci-layout-path=$(CURDIR)/$(oci_layout_path) \
