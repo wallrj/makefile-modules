@@ -49,15 +49,25 @@ else
     $$(error oci_$1_base_image_flavor has unknown value "$(oci_$1_base_image_flavor)")
 endif
 
+ifneq ($(go_$1_main_dir:.%=.),.)
+$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES start with ".")
+endif
 ifeq ($(go_$1_main_dir:%/=/),/)
 $$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with "/")
 endif
 ifeq ($(go_$1_main_dir:%.go=.go),.go)
 $$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with ".go")
 endif
-ifneq ($(go_$1_mod_dir:%/=/),/)
-$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory that ends with "/")
+ifneq ($(go_$1_mod_dir:.%=.),.)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES start with ".")
 endif
+ifeq ($(go_$1_mod_dir:%/=/),/)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with "/")
+endif
+ifeq ($(go_$1_mod_dir:%.go=.go),.go)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with ".go")
+endif
+
 endef
 
 $(foreach build_name,$(build_names),$(eval $(call check_variables,$(build_name))))
@@ -83,12 +93,12 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 	$(eval oci_layout_path := $(bin_dir)/scratch/image/oci-layout-$*.$(oci_$*_image_tag))
 	rm -rf $(CURDIR)/$(oci_layout_path)
 
-	@if [ ! -f "$(go_$*_mod_dir)go.mod" ]; then \
+	@if [ ! -f "$(go_$*_mod_dir)/go.mod" ]; then \
 		echo "ERROR: Specified directory "$(go_$*_mod_dir)" does not contain a go.mod file."; \
 		exit 1; \
 	fi
 
-	@if [ ! -f "$(go_$*_mod_dir)$(go_$*_main_dir)/main.go" ]; then \
+	@if [ ! -f "$(go_$*_mod_dir)/$(go_$*_main_dir)/main.go" ]; then \
 		echo "ERROR: Specified directory "$(go_$*_mod_dir)$(go_$*_main_dir)" does not contain a main.go file."; \
 		exit 1; \
 	fi
@@ -112,7 +122,7 @@ $(oci_build_targets): oci-build-%: | $(NEEDS_KO) $(NEEDS_GO) $(NEEDS_YQ) $(bin_d
 	SOURCE_DATE_EPOCH=$(GITEPOCH) \
 	KO_GO_PATH=$(GO) \
 	LDFLAGS="$(go_$*_ldflags)" \
-	$(KO) build $(go_$*_mod_dir)$(go_$*_main_dir) \
+	$(KO) build $(go_$*_mod_dir)/$(go_$*_main_dir) \
 		--platform=$(oci_platforms) \
 		--oci-layout-path=$(oci_layout_path) \
 		--sbom-dir=$(CURDIR)/$(oci_layout_path).sbom \

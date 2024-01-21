@@ -34,15 +34,25 @@ $(call fatal_if_undefined,go_$1_ldflags)
 $(call fatal_if_undefined,go_$1_main_dir)
 $(call fatal_if_undefined,go_$1_mod_dir)
 
+ifneq ($(go_$1_main_dir:.%=.),.)
+$$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES start with ".")
+endif
 ifeq ($(go_$1_main_dir:%/=/),/)
 $$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with "/")
 endif
 ifeq ($(go_$1_main_dir:%.go=.go),.go)
 $$(error go_$1_main_dir "$(go_$1_main_dir)" should be a directory path that DOES NOT end with ".go")
 endif
-ifneq ($(go_$1_mod_dir:%/=/),/)
-$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory that ends with "/")
+ifneq ($(go_$1_mod_dir:\.%=\.),.)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES start with ".")
 endif
+ifeq ($(go_$1_mod_dir:%/=/),/)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with "/")
+endif
+ifeq ($(go_$1_mod_dir:%.go=.go),.go)
+$$(error go_$1_mod_dir "$(go_$1_mod_dir)" should be a directory path that DOES NOT end with ".go")
+endif
+
 endef
 
 $(foreach build_name,$(all_exe_build_names),$(eval $(call check_variables,$(build_name))))
