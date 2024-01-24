@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-exe_targets ?= darwin_amd64_v1,darwin_arm64,linux_amd64_v1,linux_arm_6,linux_arm64,linux_ppc64le,linux_s390x,windows_amd64_v1,windows_arm_6,windows_arm64
+exe_targets ?= darwin_amd64_v1,darwin_arm64,linux_amd64_v1,linux_arm_7,linux_arm64,linux_ppc64le,linux_s390x,windows_amd64_v1,windows_arm64
 
 ifndef bin_dir
 $(error bin_dir is not set)
