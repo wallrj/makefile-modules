@@ -15,13 +15,12 @@
 oci_platforms ?= linux/amd64,linux/arm/v7,linux/arm64,linux/ppc64le
 
 # Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-# To get latest SHA run crane digest gcr.io/distroless/static-debian12:nonroot
-base_image_static := gcr.io/distroless/static-debian12@sha256:39ae7f0201fee13b777a3e4a5a9326a8889269172c8b4f4289d9f19c831f45f4
+# To get latest SHA run crane digest quay.io/jetstack/base-static:latest
+base_image_static := quay.io/jetstack/base-static@sha256:ba3cff0a4cacc5ae564e04c1f645000e8c9234c0f4b09534be1dee7874a42141
 
 # Use custom apko-built image as minimal base image to package the manager binary
 # To get latest SHA run crane digest quay.io/jetstack/base-static-csi:latest
-base_image_csi-static := quay.io/jetstack/base-static-csi@sha256:f8463a8a6d2265a15a982cf3d6cb08b685ab7220828885fbbb528135baa0a951
+base_image_csi-static := quay.io/jetstack/base-static-csi@sha256:54bacd13cccc385ef66730dbc7eb13bdb6a9ff8853e7f551d025ccb0e8c6bf83
 
 ifndef bin_dir
 $(error bin_dir is not set)
