@@ -184,4 +184,4 @@ $(oci_load_targets): oci-load-%: docker-tarball-% | kind-cluster $(NEEDS_KIND)
 .PHONY: $(docker_tarball_targets)
 $(docker_tarball_targets): oci_platforms := ""
 $(docker_tarball_targets): docker-tarball-%: oci-build-%
-	cd $(image_tool_dir) && GOWORK=off $(GO) run . convert-to-docker-tar $(CURDIR)/$(oci_layout_path_$*) $(docker_tarball_path_$*).docker.tar $(oci_$*_image_name_development):$(oci_$*_image_tag)
+	cd $(image_tool_dir) && GOWORK=off $(GO) run . convert-to-docker-tar $(CURDIR)/$(oci_layout_path_$*) $(docker_tarball_path_$*) $(oci_$*_image_name_development):$(oci_$*_image_tag)
