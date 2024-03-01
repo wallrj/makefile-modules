@@ -103,7 +103,7 @@ TOOLS += goreleaser=v1.23.0
 # https://pkg.go.dev/github.com/anchore/syft/cmd/syft?tab=versions
 TOOLS += syft=v0.100.0
 # https://github.com/cert-manager/helm-tool
-TOOLS += helm-tool=v0.4.1
+TOOLS += helm-tool=v0.4.2
 # https://github.com/cert-manager/cmctl
 TOOLS += cmctl=2f75014a7c360c319f8c7c8afe8e9ce33fe26dca
 # https://pkg.go.dev/github.com/cert-manager/release/cmd/cmrel?tab=versions
