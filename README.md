@@ -43,6 +43,10 @@ The order in which the makefiles are includes is as follows (see [Makefile](./mo
 -include make/_shared/*/02_mod.mk
 ```
 
+When developing a new module, put your targets in `01_mod.mk`.
+This is to ensure that the targets for downloading tool dependencies such as
+`NEEDS_XYZ` are included first and can be resolved.
+
 ### Upgrading the tools in the tools module
 
 1. bump the versions in the modules/tools/00_mod.mk file
