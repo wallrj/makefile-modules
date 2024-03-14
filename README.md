@@ -47,6 +47,14 @@ When developing a new module, put your targets in `01_mod.mk`.
 This is to ensure that the targets for downloading tool dependencies such as
 `NEEDS_XYZ` are included first and can be resolved.
 
+To test changes that you make in *this* repository:
+1. Open a branch in a *target repository* that consumes the new or changed module. E.g. approver-policy.
+2. Update the `klone.yaml` file in the target repository with a reference to the branch and commit containing the changes in *this* repository.
+3. Run `make upgrade-klone` in the target repository, to pull in your changes.
+4. Test the new or changed `make` target in the target repository.
+5. Fix any problems by pushing changes to your branch in *this* repository.
+6. Go to step 3 to pull latest changes into the target repository and then retest.
+
 ### Upgrading the tools in the tools module
 
 1. bump the versions in the modules/tools/00_mod.mk file
