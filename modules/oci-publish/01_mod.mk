@@ -73,7 +73,7 @@ oci_maybe_push_targets := $(build_names:%=oci-maybe-push-%)
 define oci_push_target
 .PHONY: $(call sanitize_target,oci-push-$2)
 $(call sanitize_target,oci-push-$2): oci-build-$1 | $(NEEDS_CRANE)
-	$(CRANE) $(crane_flags_$1) push "$(oci_layout_path_$1)" "$2:$(oci_$1_image_tag)"
+	$$(CRANE) $(crane_flags_$1) push "$(oci_layout_path_$1)" "$2:$(oci_$1_image_tag)"
 	$(if $(filter true,$(oci_sign_on_push_$1)),$(MAKE) $(call sanitize_target,oci-sign-$2))
 
 .PHONY: $(call sanitize_target,oci-maybe-push-$2)
@@ -87,7 +87,8 @@ oci-push-$1: $(call sanitize_target,oci-push-$2)
 oci-maybe-push-$1: $(call sanitize_target,oci-maybe-push-$2)
 endef
 
-$(foreach build_name,$(build_names),$(eval $(call oci_push_target,$(build_name),$(oci_$(build_name)_image_name))))
+oci_push_target_per_image = $(foreach image_name,$2,$(eval $(call oci_push_target,$1,$(image_name))))
+$(foreach build_name,$(build_names),$(eval $(call oci_push_target_per_image,$(build_name),$(oci_$(build_name)_image_name))))
 
 .PHONY: $(oci_push_targets)
 ## Build and push OCI image.
