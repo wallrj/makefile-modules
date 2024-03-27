@@ -42,6 +42,9 @@ bin_dir := _bin
 $(bin_dir) $(bin_dir)/scratch:
 	mkdir -p $@
 
+# Set required variables
+build_names := #
+
 include modules/**/00_mod.mk
 
 .PHONY: images-learn-sha
