@@ -43,13 +43,13 @@ var CommandConvertToDockerTar = cobra.Command{
 		must("could not load oci image index", err)
 
 		images := getImagesFromIndex(index, func(desc v1.Descriptor) bool {
-			return desc.Platform.Architecture == runtime.GOARCH
+			return desc.Platform != nil && desc.Platform.Architecture == runtime.GOARCH
 		})
 
 		switch {
 		case len(images) == 0:
 			fail("no matching images found")
-		case len(images) > 0:
+		case len(images) > 1:
 			fail("multiple matching images found")
 		}
 
@@ -68,6 +68,18 @@ func getImagesFromIndex(index v1.ImageIndex, matcher match.Matcher) (images []v1
 	for _, descriptor := range manifest.Manifests {
 		switch {
 		case descriptor.MediaType.IsImage():
+			// If the platform is not part of the index manifest, attempt to
+			// load it from the image config
+			if descriptor.Platform == nil {
+				img, err := index.Image(descriptor.Digest)
+				must("could not load image", err)
+
+				cfg, err := img.ConfigFile()
+				must("could not load image config", err)
+
+				descriptor.Platform = cfg.Platform()
+			}
+
 			if matcher(descriptor) {
 				img, err := index.Image(descriptor.Digest)
 				must("could not load image", err)
