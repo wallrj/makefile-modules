@@ -29,14 +29,21 @@ lockfile="$finalfile.lock"
 # Timeout in seconds.
 timeout=60
 
-mkdir -p "$(dirname "$lockfile")"
-touch "$lockfile"
-exec {FD}<>"$lockfile"
+# On OSX, flock is not installed, we just skip locking in that case,
+# this means that running verify in parallel without downloading all
+# tools first will not work.
+flock_installed=$(command -v flock >/dev/null && echo "yes" || echo "no")
 
-# wait for the file to be unlocked
-if ! flock -x -w $timeout $FD; then
-  echo "Failed to obtain a lock for $lockfile within $timeout seconds"
-  exit 1
+if [[ "$flock_installed" == "yes" ]]; then
+  mkdir -p "$(dirname "$lockfile")"
+  touch "$lockfile"
+  exec {FD}<>"$lockfile"
+
+  # wait for the file to be unlocked
+  if ! flock -x -w $timeout $FD; then
+    echo "Failed to obtain a lock for $lockfile within $timeout seconds"
+    exit 1
+  fi
 fi
 
 # now that we have the lock, check if file is already there
