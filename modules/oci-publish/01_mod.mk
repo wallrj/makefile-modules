@@ -88,7 +88,7 @@ oci-maybe-push-$1: $(call sanitize_target,oci-maybe-push-$2)
 endef
 
 oci_push_target_per_image = $(foreach image_name,$2,$(eval $(call oci_push_target,$1,$(image_name))))
-$(foreach build_name,$(push_names),$(eval $(call oci_push_target_per_image,$(build_name),$(oci_$(build_name)_image_name))))
+$(foreach build_name,$(push_names),$(eval $(call oci_push_target_per_image,$(build_name),$(call oci_image_names_for,$(build_name)))))
 
 .PHONY: $(oci_push_targets)
 ## Build and push OCI image.
