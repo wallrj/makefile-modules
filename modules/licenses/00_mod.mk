@@ -24,7 +24,7 @@ $(generate_go_licenses_targets): | $$(NEEDS_GO-LICENSES)
 ## Generate licenses for the golang dependencies
 ## @category [shared] Generate/Verify
 generate-go-licences: $(generate_go_licenses_targets)
-shared_generate_targets += $(generate_go_licenses_targets)
+shared_generate_targets += generate-go-licences
 
 # Target to generate image layer containing license information
 .PHONY: oci-license-layer-%
