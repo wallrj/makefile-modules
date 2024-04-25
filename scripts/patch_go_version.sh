@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-set -eu -o pipefail
+set -o errexit
+set -o nounset
+set -o pipefail
 
 TMPDIR=$(mktemp -d)
 
