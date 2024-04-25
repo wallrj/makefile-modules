@@ -95,7 +95,7 @@ define preflight_scan_targets
 .PHONY: preflight-scan-$1
 preflight-scan-$1: | $$(NEEDS_PREFLIGHT)
 	$$(call fatal_if_undefined,PYXIS_API_TOKEN)
-	$$(PREFLIGHT) check container --certification-project-id $2 --pyxis-api-token $$(PYXIS_API_TOKEN) $(filter $1:%,$(foreach build_name,$(build_names),$(addsuffix :$(call oci_image_tag_for,$(build_name)),$(call oci_image_names_for,$(build_name)))))
+	$$(PREFLIGHT) check container --submit --certification-project-id $2 --pyxis-api-token $$(PYXIS_API_TOKEN) $(firstword $(filter $1:%,$(foreach build_name,$(build_names),$(addsuffix :$(oci_$(build_name)_image_tag),$(oci_$(build_name)_image_name)))))
 
 preflight-scan: preflight-scan-$1
 endef
