@@ -18,7 +18,7 @@ go_mod_dirs := $(sort $(foreach build_name,$(build_names),$(go_$(build_name)_mod
 generate_go_licenses_targets := $(addsuffix /LICENSES,$(go_mod_dirs:/=))
 
 .PHONY: $(generate_go_licenses_targets)
-$(generate_go_licenses_targets): | $(NEEDS_GO-LICENSES)
+$(generate_go_licenses_targets): | $$(NEEDS_GO-LICENSES)
 	cd $(dir $@) && $(GO-LICENSES) report --ignore "$(license_ignore)" ./... > LICENSES
 
 ## Generate licenses for the golang dependencies
@@ -28,7 +28,7 @@ shared_generate_targets += $(generate_go_licenses_targets)
 
 # Target to generate image layer containing license information
 .PHONY: oci-license-layer-%
-oci-license-layer-%: | $(bin_dir)/scratch $(NEEDS_GO-LICENSES)
+oci-license-layer-%: | $(bin_dir)/scratch $$(NEEDS_GO-LICENSES)
 	rm -rf $(license_layer_path_$*)
 	mkdir -p $(license_layer_path_$*)/licenses
 	cd $(go_$*_mod_dir) && $(GO-LICENSES) report --ignore "$(license_ignore)" $(addprefix --template=,$(license_template_file)) $(go_$*_main_dir) > $(license_layer_path_$*)/licenses/LICENCES
