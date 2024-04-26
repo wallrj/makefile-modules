@@ -124,7 +124,7 @@ TOOLS += operator-sdk=v1.34.1
 # https://pkg.go.dev/github.com/cli/cli/v2?tab=versions
 TOOLS += gh=v2.47.0
 # https:///github.com/redhat-openshift-ecosystem/openshift-preflight/releases
-TOOLS += preflight=1.9.1
+TOOLS += preflight=1.9.2
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
 K8S_CODEGEN_VERSION=v0.29.1
@@ -324,7 +324,6 @@ GO_DEPENDENCIES += golangci-lint=github.com/golangci/golangci-lint/cmd/golangci-
 GO_DEPENDENCIES += govulncheck=golang.org/x/vuln/cmd/govulncheck
 GO_DEPENDENCIES += operator-sdk=github.com/operator-framework/operator-sdk/cmd/operator-sdk
 GO_DEPENDENCIES += gh=github.com/cli/cli/v2/cmd/gh
-GO_DEPENDENCIES += preflight=github.com/redhat-openshift-ecosystem/openshift-preflight/cmd/preflight
 
 #################
 # go build tags #
@@ -559,6 +558,29 @@ $(DOWNLOAD_DIR)/tools/rclone@$(RCLONE_VERSION)_$(HOST_OS)_$(HOST_ARCH): | $(DOWN
 		unzip -p $(outfile).zip rclone-$(RCLONE_VERSION)-$(OS)-$(HOST_ARCH)/rclone > $(outfile); \
 		chmod +x $(outfile); \
 		rm -f $(outfile).zip
+
+PREFLIGHT_linux_amd64_SHA256SUM=20f31e4af2004e8e3407844afea4e973975069169d69794e0633f0cb91d45afd
+PREFLIGHT_linux_arm64_SHA256SUM=c42cf4132027d937da88da07760e8fd9b1a8836f9c7795a1b60513d99c6939fe
+
+# Currently there are no offical releases for darwin, you cannot submit results 
+# on non-official binaries, but we can still run tests.
+#
+# Once https://github.com/redhat-openshift-ecosystem/openshift-preflight/pull/942 is merged
+# we can remove this darwin specific hack
+.PRECIOUS: $(DOWNLOAD_DIR)/tools/preflight@$(PREFLIGHT_VERSION)_darwin_$(HOST_ARCH)
+$(DOWNLOAD_DIR)/tools/preflight@$(PREFLIGHT_VERSION)_darwin_$(HOST_ARCH): | $(DOWNLOAD_DIR)/tools
+	@source $(lock_script) $@; \
+		mkdir -p $(outfile).dir; \
+		GOWORK=off GOBIN=$(outfile).dir $(GO) install github.com/redhat-openshift-ecosystem/openshift-preflight/cmd/preflight@$(PREFLIGHT_VERSION); \
+		mv $(outfile).dir/preflight $(outfile); \
+		rm -rf $(outfile).dir
+
+.PRECIOUS: $(DOWNLOAD_DIR)/tools/preflight@$(PREFLIGHT_VERSION)_linux_$(HOST_ARCH)
+$(DOWNLOAD_DIR)/tools/preflight@$(PREFLIGHT_VERSION)_linux_$(HOST_ARCH): | $(DOWNLOAD_DIR)/tools
+	@source $(lock_script) $@; \
+		$(CURL) https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$(PREFLIGHT_VERSION)/preflight-linux-$(HOST_ARCH) -o $(outfile); \
+		$(checkhash_script) $(outfile) $(PREFLIGHT_linux_$(HOST_ARCH)_SHA256SUM); \
+		chmod +x $(outfile)
 
 #################
 # Other Targets #
