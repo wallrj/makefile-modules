@@ -167,22 +167,11 @@ $(bin_dir)/scratch/%_VERSION: FORCE | $(bin_dir)/scratch
 # --retry-connrefused = retry even if the initial connection was refused
 CURL = curl --silent --show-error --fail --location --retry 10 --retry-connrefused
 
-# In Prow, the pod has the folder "$(bin_dir)/downloaded" mounted into the
-# container. For some reason, even though the permissions are correct,
-# binaries that are mounted with hostPath can't be executed. When in CI, we
-# copy the binaries to work around that. Using $(LN) is only required when
-# dealing with binaries. Other files and folders can be symlinked.
-#
-# Details on how "$(bin_dir)/downloaded" gets cached are available in the
-# description of the PR https://github.com/jetstack/testing/pull/651.
-#
-# We use "printenv CI" instead of just "ifeq ($(CI),)" because otherwise we
-# would get "warning: undefined variable 'CI'".
-ifeq ($(shell printenv CI),)
-LN := ln -f -s
-else
-LN := cp -f -r
-endif
+# LN is expected to be an atomic action, meaning that two Make processes
+# can run the "link $(DOWNLOAD_DIR)/tools/xxx@$(XXX_VERSION)_$(HOST_OS)_$(HOST_ARCH)
+# to $(bin_dir)/tools/xxx" operation simulatiously without issues (both
+# will perform the action and the second time the link will be overwritten).
+LN := ln -fs
 
 UC = $(shell echo '$1' | tr a-z A-Z)
 LC = $(shell echo '$1' | tr A-Z a-z)
@@ -204,8 +193,8 @@ TOOL_NAMES :=
 #        in targets or in scripts, because it is agnostic to the
 #        working directory
 # - an unversioned target $(bin_dir)/tools/xxx is generated that
-#   creates a copy/ link to the corresponding versioned target:
-#   $(bin_dir)/tools/xxx@$(XXX_VERSION)_$(HOST_OS)_$(HOST_ARCH)
+#   creates a link to the corresponding versioned target:
+#   $(DOWNLOAD_DIR)/tools/xxx@$(XXX_VERSION)_$(HOST_OS)_$(HOST_ARCH)
 define tool_defs
 TOOL_NAMES += $1
 
@@ -275,7 +264,6 @@ $(bin_dir)/tools/go: $(bin_dir)/scratch/VENDORED_GO_VERSION | $(bin_dir)/tools/g
 
 # The "_" in "_bin" prevents "go mod tidy" from trying to tidy the vendored goroot.
 $(bin_dir)/tools/goroot: $(bin_dir)/scratch/VENDORED_GO_VERSION | $(GOVENDOR_DIR)/go@$(VENDORED_GO_VERSION)_$(HOST_OS)_$(HOST_ARCH)/goroot $(bin_dir)/tools
-	@rm -rf $(bin_dir)/tools/goroot
 	@cd $(dir $@) && $(LN) $(patsubst $(bin_dir)/%,../%,$(word 1,$|)) $(notdir $@)
 	@touch $@ # making sure the target of the symlink is newer than *_VERSION
 
