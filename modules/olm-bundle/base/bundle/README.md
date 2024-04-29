@@ -32,6 +32,8 @@ bundle/
 │  tests/
 │   └─ scorecard/
 │       └─ config.yaml                            [optional]
+│  examples/
+│   └─ example yaml files                         [optional]
 ├─ icon.png                                       [optional]
 ├─ values.yaml                                    [optional]
 └─ README.md
@@ -66,6 +68,11 @@ field is often very large it makes sense to have it as a separate file.
 
 The values used when `Helm` is used to generate the bundle manifests. This
 allows the bundle to have specific config defaults.
+
+### `bundle/examples/*.yaml`
+
+Any examples to include in the OLM bundle, the examples are used when listed on operator-hub. You can have a maximum of
+one example per CRD.
 
 ### `bundle/README.md`
 
