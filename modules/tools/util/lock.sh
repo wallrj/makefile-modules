@@ -29,7 +29,7 @@ set -o pipefail
 finalfile="$1"
 lockfile="$finalfile.lock"
 # Timeout in seconds.
-timeout=60
+timeout="${DOWNLOAD_TIMEOUT:-60}"
 
 # On OSX, flock is not installed, we just skip locking in that case,
 # this means that running verify in parallel without downloading all
