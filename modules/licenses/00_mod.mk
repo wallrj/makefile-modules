@@ -19,7 +19,7 @@ generate_go_licenses_targets := $(addsuffix /LICENSES,$(go_mod_dirs:/=))
 
 .PHONY: $(generate_go_licenses_targets)
 $(generate_go_licenses_targets): | $$(NEEDS_GO-LICENSES)
-	cd $(dir $@) && $(GO-LICENSES) report --ignore "$(license_ignore)" ./... > LICENSES
+	cd $(dir $@) && GOOS=linux GOARCH=amd64 $(GO-LICENSES) report --ignore "$(license_ignore)" ./... > LICENSES
 
 ## Generate licenses for the golang dependencies
 ## @category [shared] Generate/Verify
@@ -31,7 +31,7 @@ shared_generate_targets += generate-go-licences
 oci-license-layer-%: | $(bin_dir)/scratch $$(NEEDS_GO-LICENSES)
 	rm -rf $(license_layer_path_$*)
 	mkdir -p $(license_layer_path_$*)/licenses
-	cd $(go_$*_mod_dir) && $(GO-LICENSES) report --ignore "$(license_ignore)" $(addprefix --template=,$(license_template_file)) $(go_$*_main_dir) > $(license_layer_path_$*)/licenses/LICENCES
+	cd $(go_$*_mod_dir) && GOOS=linux GOARCH=amd64 $(GO-LICENSES) report --ignore "$(license_ignore)" $(addprefix --template=,$(license_template_file)) $(go_$*_main_dir) > $(license_layer_path_$*)/licenses/LICENCES
 
 # Add the license layer to every image
 define licences_layer_dependencies
