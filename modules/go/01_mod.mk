@@ -89,8 +89,8 @@ shared_verify_targets_dirty += verify-golangci-lint
 .PHONY: fix-golangci-lint
 ## Fix all Go modules using golangci-lint
 ## @category [shared] Generate/ Verify
-fix-golangci-lint: | $(NEEDS_GOLANGCI-LINT) $(NEEDS_YQ) $(bin_dir)/scratch
-	gci write \
+fix-golangci-lint: | $(NEEDS_GOLANGCI-LINT) $(NEEDS_YQ) $(NEEDS_GCI) $(bin_dir)/scratch
+	$(GCI) write \
 		-s "standard" \
 		-s "default" \
 		-s "prefix($(repo_name))" \
