@@ -102,7 +102,8 @@ TOOLS += oras=v1.1.0
 # If there is no go.mod file (which is only the case for the makefile-modules
 # repo), then we default to a version that we know exists. We have to do this
 # because otherwise the awk failure renders the whole makefile unusable.
-TOOLS += ginkgo=$(shell [[ -f go.mod ]] && awk '/ginkgo\/v2/ {print $$2}' go.mod || echo "v2.13.2")
+detected_ginkgo_version := $(shell [[ -f go.mod ]] && awk '/ginkgo\/v2/ {print $$2}' go.mod || echo "v2.13.2")
+TOOLS += ginkgo=$(detected_ginkgo_version)
 # https://pkg.go.dev/github.com/cert-manager/klone?tab=versions
 TOOLS += klone=v0.0.4
 # https://pkg.go.dev/github.com/goreleaser/goreleaser?tab=versions
@@ -129,7 +130,7 @@ TOOLS += preflight=1.9.2
 TOOLS += gci=v0.13.4
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
-K8S_CODEGEN_VERSION=v0.29.1
+K8S_CODEGEN_VERSION := v0.29.1
 TOOLS += client-gen=$(K8S_CODEGEN_VERSION)
 TOOLS += deepcopy-gen=$(K8S_CODEGEN_VERSION)
 TOOLS += informer-gen=$(K8S_CODEGEN_VERSION)
@@ -140,7 +141,7 @@ TOOLS += defaulter-gen=$(K8S_CODEGEN_VERSION)
 TOOLS += conversion-gen=$(K8S_CODEGEN_VERSION)
 
 # https://github.com/kubernetes-sigs/kubebuilder/blob/tools-releases/build/cloudbuild_tools.yaml
-KUBEBUILDER_ASSETS_VERSION=1.29.0
+KUBEBUILDER_ASSETS_VERSION := 1.29.0
 TOOLS += etcd=$(KUBEBUILDER_ASSETS_VERSION)
 TOOLS += kube-apiserver=$(KUBEBUILDER_ASSETS_VERSION)
 
@@ -167,7 +168,7 @@ $(bin_dir)/scratch/%_VERSION: FORCE | $(bin_dir)/scratch
 # --location = follow redirects from the server
 # --retry = the number of times to retry a failed attempt to connect
 # --retry-connrefused = retry even if the initial connection was refused
-CURL = curl --silent --show-error --fail --location --retry 10 --retry-connrefused
+CURL := curl --silent --show-error --fail --location --retry 10 --retry-connrefused
 
 # LN is expected to be an atomic action, meaning that two Make processes
 # can run the "link $(DOWNLOAD_DIR)/tools/xxx@$(XXX_VERSION)_$(HOST_OS)_$(HOST_ARCH)
@@ -175,8 +176,13 @@ CURL = curl --silent --show-error --fail --location --retry 10 --retry-connrefus
 # will perform the action and the second time the link will be overwritten).
 LN := ln -fs
 
-UC = $(shell echo '$1' | tr a-z A-Z)
-LC = $(shell echo '$1' | tr A-Z a-z)
+upper_map := a:A b:B c:C d:D e:E f:F g:G h:H i:I j:J k:K l:L m:M n:N o:O p:P q:Q r:R s:S t:T u:U v:V w:W x:X y:Y z:Z
+UC = $(strip \
+		$(eval __upper := $1) \
+		$(foreach p,$(upper_map), \
+			$(eval __upper := $(subst $(word 1,$(subst :, ,$p)),$(word 2,$(subst :, ,$p)),$(__upper))) \
+		) \
+	)$(__upper)
 
 TOOL_NAMES :=
 
@@ -227,13 +233,18 @@ TOOLS_PATHS := $(TOOL_NAMES:%=$(bin_dir)/tools/%)
 # or when "make vendor-go" was previously run, in which case $(NEEDS_GO) is set
 # to $(bin_dir)/tools/go, since $(bin_dir)/tools/go is a prerequisite of
 # any target depending on Go when "make vendor-go" was run.
-export NEEDS_GO ?= $(if $(findstring vendor-go,$(MAKECMDGOALS))$(shell [ -f $(bin_dir)/tools/go ] && echo yes), $(bin_dir)/tools/go,)
-ifeq ($(NEEDS_GO),)
+
+detected_vendoring := $(findstring vendor-go,$(MAKECMDGOALS))$(shell [ -f $(bin_dir)/tools/go ] && echo yes)
+export VENDOR_GO ?= $(detected_vendoring)
+
+ifeq ($(VENDOR_GO),)
 GO := go
+NEEDS_GO := #
 else
 export GOROOT := $(CURDIR)/$(bin_dir)/tools/goroot
 export PATH := $(CURDIR)/$(bin_dir)/tools/goroot/bin:$(PATH)
 GO := $(CURDIR)/$(bin_dir)/tools/go
+NEEDS_GO := $(bin_dir)/tools/go
 MAKE := $(MAKE) vendor-go
 endif
 
