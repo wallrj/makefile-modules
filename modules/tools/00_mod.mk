@@ -125,6 +125,8 @@ TOOLS += operator-sdk=v1.34.1
 TOOLS += gh=v2.47.0
 # https:///github.com/redhat-openshift-ecosystem/openshift-preflight/releases
 TOOLS += preflight=1.9.2
+# https://github.com/daixiang0/gci/releases/
+TOOLS += gci=v0.13.4
 
 # https://pkg.go.dev/k8s.io/code-generator/cmd?tab=versions
 K8S_CODEGEN_VERSION=v0.29.1
@@ -312,6 +314,7 @@ GO_DEPENDENCIES += golangci-lint=github.com/golangci/golangci-lint/cmd/golangci-
 GO_DEPENDENCIES += govulncheck=golang.org/x/vuln/cmd/govulncheck
 GO_DEPENDENCIES += operator-sdk=github.com/operator-framework/operator-sdk/cmd/operator-sdk
 GO_DEPENDENCIES += gh=github.com/cli/cli/v2/cmd/gh
+GO_DEPENDENCIES += gci=github.com/daixiang0/gci
 
 #################
 # go build tags #
@@ -550,7 +553,7 @@ $(DOWNLOAD_DIR)/tools/rclone@$(RCLONE_VERSION)_$(HOST_OS)_$(HOST_ARCH): | $(DOWN
 PREFLIGHT_linux_amd64_SHA256SUM=20f31e4af2004e8e3407844afea4e973975069169d69794e0633f0cb91d45afd
 PREFLIGHT_linux_arm64_SHA256SUM=c42cf4132027d937da88da07760e8fd9b1a8836f9c7795a1b60513d99c6939fe
 
-# Currently there are no offical releases for darwin, you cannot submit results 
+# Currently there are no offical releases for darwin, you cannot submit results
 # on non-official binaries, but we can still run tests.
 #
 # Once https://github.com/redhat-openshift-ecosystem/openshift-preflight/pull/942 is merged
@@ -614,7 +617,7 @@ tools-learn-sha: | $(bin_dir)
 	HOST_OS=linux HOST_ARCH=arm64 $(MAKE) tools
 	HOST_OS=darwin HOST_ARCH=amd64 $(MAKE) tools
 	HOST_OS=darwin HOST_ARCH=arm64 $(MAKE) tools
-	
+
 	HOST_OS=linux HOST_ARCH=amd64 $(MAKE) vendor-go
 	HOST_OS=linux HOST_ARCH=arm64 $(MAKE) vendor-go
 	HOST_OS=darwin HOST_ARCH=amd64 $(MAKE) vendor-go
