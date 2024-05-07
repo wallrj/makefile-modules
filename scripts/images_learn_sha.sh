@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -eu -o pipefail
 
 images_amd64=${IMAGES_AMD64}
 images_arm64=${IMAGES_ARM64}
@@ -50,8 +52,14 @@ module_files=$(find ./modules/ -maxdepth 2 -name "00_mod.mk" -type f)
 # Don't replace the digests of the kind images
 module_files=$(echo "$module_files" | grep -v "docker.io/kindest/node")
 
+# see https://stackoverflow.com/a/53408233
+sed_args="-i''"
+if [[ $(uname -s) == "Darwin" ]]; then
+	sed_args="-i ''"
+fi
+
 for replace in "${learn_data[@]}"; do
     for file in $module_files; do
-        sed -i "$replace" "$file";
+        sed $sed_args "$replace" "$file";
     done
 done
