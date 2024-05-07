@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -eu -o pipefail
 
 images_amd64=${IMAGES_AMD64}
 images_arm64=${IMAGES_ARM64}
