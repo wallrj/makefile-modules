@@ -56,7 +56,7 @@ var CommandAppendLayers = cobra.Command{
 		must("could not get image index media type", err)
 
 		layerType := types.DockerLayer
-		if indexMediaType == types.OCIManifestSchema1 {
+		if indexMediaType == types.OCIImageIndex {
 			layerType = types.OCILayer
 		}
 
