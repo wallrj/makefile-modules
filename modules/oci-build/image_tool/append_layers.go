@@ -145,11 +145,15 @@ func appendLayersToImageIndex(index v1.ImageIndex, layers []v1.Layer) v1.ImageIn
 			digest, err := img.Digest()
 			must("could not get image digest", err)
 
+			imgSize, err := img.Size()
+			must("could not get image size", err)
+
 			slog.Info("appended layers to image", "old_digest", descriptor.Digest, "digest", digest, "platform", descriptor.Platform)
 
 			index = mutate.RemoveManifests(index, match.Digests(descriptor.Digest))
 
 			descriptor.Digest = digest
+			descriptor.Size = imgSize
 			index = mutate.AppendManifests(index, mutate.IndexAddendum{
 				Add:        img,
 				Descriptor: descriptor,
@@ -166,9 +170,13 @@ func appendLayersToImageIndex(index v1.ImageIndex, layers []v1.Layer) v1.ImageIn
 			digest, err := child.Digest()
 			must("could not get image digest", err)
 
+			imgSize, err := child.Size()
+			must("could not get image size", err)
+
 			index = mutate.RemoveManifests(index, match.Digests(descriptor.Digest))
 
 			descriptor.Digest = digest
+			descriptor.Size = imgSize
 			index = mutate.AppendManifests(index, mutate.IndexAddendum{
 				Add:        child,
 				Descriptor: descriptor,
