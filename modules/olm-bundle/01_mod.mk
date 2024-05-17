@@ -44,7 +44,7 @@ olm-bundle: $(helm_chart_archive) $(olm_clusterserviceversion_path) | $(NEEDS_HE
 	$(YQ) -i '.spec.relatedImages = [ .spec.install.spec.deployments[].spec.template.spec.containers[] | {"name": .name, "image": .image} ]' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
 
 	@# Set the supported OS/Arches based on $(oci_platforms)
-	$(YQ) -i --string-interpolation '. * ("$(oci_platforms)" | [ split(",").[] | split("/") | ["operatorframework.io/os.\(.[0])", "operatorframework.io/arch.\(.[1])"] ] | [ .[][] ] | unique | .[] as $$item ireduce({}; . * {"metadata": {"annotations": {$$item: "supported"}}}))' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
+	$(YQ) -i --string-interpolation '. * ("$(oci_platforms)" | [ split(",").[] | split("/") | ["operatorframework.io/os.\(.[0])", "operatorframework.io/arch.\(.[1])"] ] | [ .[][] ] | unique | .[] as $$item ireduce({}; . * {"metadata": {"labels": {$$item: "supported"}}}))' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
 	
 	@# Set the openshift version
 	$(YQ) -i '.annotations."com.redhat.openshift.versions"="$(olm_openshift_version)"' $(olm_bundle_dir)/metadata/annotations.yaml
