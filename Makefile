@@ -44,6 +44,7 @@ $(bin_dir) $(bin_dir)/scratch:
 
 # Set required variables
 build_names := #
+olm_project_name := #
 
 include modules/**/00_mod.mk
 
