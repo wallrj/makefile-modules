@@ -439,10 +439,10 @@ $(DOWNLOAD_DIR)/tools/azwi@$(AZWI_VERSION)_$(HOST_OS)_$(HOST_ARCH): | $(DOWNLOAD
 		tar xfO $(outfile).tar.gz azwi > $(outfile) && chmod 775 $(outfile); \
 		rm -f $(outfile).tar.gz
 
-kubebuilder_tools_linux_amd64_SHA256SUM=d51dae845397b7548444157903f2d573493afb6f90ce9417c0f5c61d4b1f908d
-kubebuilder_tools_linux_arm64_SHA256SUM=83123010f603390ee0f417ad1cf2a715f5bff335c5841dcd4221764e52732336
-kubebuilder_tools_darwin_amd64_SHA256SUM=46f5a680f28b6db9fdaaab4659dee68a1f2e04a0d9a39f9b0176562a9e95167b
-kubebuilder_tools_darwin_arm64_SHA256SUM=ce37b6fcd7678d78a610da1ae5e8e68777025b2bf046558820f967fe7a8f0dfd
+kubebuilder_tools_linux_amd64_SHA256SUM=00fb1322a3da606e90586d2327abe797cea3a6e199a37d3bb2fbef6d8f5fc6bb
+kubebuilder_tools_linux_arm64_SHA256SUM=9fb10e0e875da1490c70ae4eae94633b120ea64513c7f632ce6549f2c078824f
+kubebuilder_tools_darwin_amd64_SHA256SUM=3a1230a8c98458639aca23f956d13cd1376e0efdb0e335b52fe4ecc50f75c389
+kubebuilder_tools_darwin_arm64_SHA256SUM=6337e5cfbbbb2ad10d713c993c22d7ff3cdf2cc878148eb0119bbaa6d094d8f2
 
 .PRECIOUS: $(DOWNLOAD_DIR)/tools/kubebuilder_tools_$(KUBEBUILDER_ASSETS_VERSION)_$(HOST_OS)_$(HOST_ARCH).tar.gz
 $(DOWNLOAD_DIR)/tools/kubebuilder_tools_$(KUBEBUILDER_ASSETS_VERSION)_$(HOST_OS)_$(HOST_ARCH).tar.gz: | $(DOWNLOAD_DIR)/tools
