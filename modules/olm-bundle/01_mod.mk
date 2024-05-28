@@ -95,7 +95,7 @@ olm-publish-$(subst /,-,$1): olm-bundle | $(NEEDS_GH) $(bin_dir)/scratch
 		git add operators/$(olm_project_name)/ci.yaml && \
 		git commit -m "operator $(olm_project_name) ($(VERSION))" && \
 		git push -f -c "credential.helper=!$(GH) auth git-credential" origin $(VERSION) && \
-		{ $(GH) pr create --repo $1 --head $(firstword $(subst /, ,$2)):$(VERSION) --title "operator $(olm_project_name) ($(VERSION))" ||: }
+		{ $(GH) pr create --repo $1 --head $(firstword $(subst /, ,$2)):$(VERSION) --title "operator $(olm_project_name) ($(VERSION))" ||:; }
 
 olm-publish: olm-publish-$(subst /,-,$1)
 endef
