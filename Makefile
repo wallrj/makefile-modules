@@ -72,11 +72,26 @@ upgrade-base-images: | $(NEEDS_CRANE)
 	@CRANE=$(CRANE) \
 		./scripts/upgrade_base_images.sh
 
+# Upgrade the kind images to the latest available version from
+# the kind release description. This script is useful when kind publishes
+# a new kubernetes image and updates the kind release description.
+.PHONY: upgrade-kind-images
+upgrade-kind-images: | $(NEEDS_CRANE)
+	@CRANE=$(CRANE) \
+		./scripts/learn_kind_images.sh --force
+
 ## SHA learning targets
 
+# Learn the shas for the tools in the tools module.
+# This will update the tools module with the new shas, this is
+# useful after bumping the versions in the tools module Makefile.
+# We will also check the kind images and update them if the kind
+# version has been bumped.
 .PHONY: learn-tools-shas
-learn-tools-shas:
+learn-tools-shas: | $(NEEDS_CRANE)
 	./scripts/learn_tools_shas.sh tools vendor-go
+	@CRANE=$(CRANE) \
+		./scripts/learn_kind_images.sh
 
 .PHONY: learn-image-shas
 learn-image-shas: | $(NEEDS_CRANE)
@@ -89,6 +104,7 @@ help: ## Show this help
 	@echo
 	@echo "make patch-go-version"
 	@echo "make upgrade-base-images"
+	@echo "make upgrade-kind-images"
 	@echo
 	@echo "make learn-tools-shas"
 	@echo "make learn-image-shas"
