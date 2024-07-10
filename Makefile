@@ -21,46 +21,68 @@
 
 ###################################################################################
 
-# See https://tech.davis-hansson.com/p/make/ for more information
-# about these initial lines.
+# Some modules build their dependencies from variables, we want these to be 
+# evalutated at the last possible moment. For this we use second expansion to 
+# re-evaluate the generate and verify targets a second time.
+#
+# See https://www.gnu.org/software/make/manual/html_node/Secondary-Expansion.html
+.SECONDEXPANSION:
+
+# For details on some of these "prelude" settings, see:
+# https://clarkgrubb.com/makefile-style-guide
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 SHELL := /usr/bin/env bash
-.SHELLFLAGS := -eu -o pipefail -c
+.SHELLFLAGS := -uo pipefail -c
 .DEFAULT_GOAL := help
 .DELETE_ON_ERROR:
 .SUFFIXES:
 FORCE:
 
-HOST_OS ?= $(shell uname -s | tr A-Z a-z)
-HOST_ARCH ?= $(shell uname -m)
+# The reason we don't use "go env GOOS" or "go env GOARCH" is that the "go"
+# binary may not be available in the PATH yet when the Makefiles are
+# evaluated. HOST_OS and HOST_ARCH only support Linux, *BSD and macOS (M1
+# and Intel).
+host_os := $(shell uname -s | tr A-Z a-z)
+host_arch := $(shell uname -m)
+HOST_OS ?= $(host_os)
+HOST_ARCH ?= $(host_arch)
+
 ifeq (x86_64, $(HOST_ARCH))
 	HOST_ARCH = amd64
+else ifeq (aarch64, $(HOST_ARCH))
+	# linux reports the arm64 arch as aarch64
+	HOST_ARCH = arm64
 endif
 
 bin_dir := _bin
-
 $(bin_dir) $(bin_dir)/scratch:
 	mkdir -p $@
 
-# Set required variables
-build_names := #
-olm_project_name := #
+# Include the tools module Makefile, allowing us to download crane
+include modules/tools/00_mod.mk
 
-include modules/**/00_mod.mk
+## Upgrade targets
 
-.PHONY: images-learn-sha
-images-learn-sha: $(bin_dir) | $(NEEDS_CRANE)
-	rm -rf ./$(bin_dir)/downloaded/images/
-	mkdir -p ./$(bin_dir)/scratch/
+.PHONY: patch-go-version
+patch-go-version:
+	@./scripts/patch_go_version.sh
 
-	IMAGES_AMD64="$(images_amd64)" \
-	IMAGES_ARM64="$(images_arm64)" \
-	CRANE=$(CRANE) \
-		./scripts/images_learn_sha.sh
+## SHA learning targets
+
+.PHONY: learn-tools-shas
+learn-tools-shas:
+	./scripts/learn_tools_shas.sh tools vendor-go
+
+.PHONY: learn-image-shas
+learn-image-shas: | $(NEEDS_CRANE)
+	@CRANE=$(CRANE) \
+		./scripts/learn_image_shas.sh
 
 .PHONY: help
 help: ## Show this help
 	@echo "Usage: make [target] ..."
 	@echo
-	@echo "make tools-learn-sha"
-	@echo "make images-learn-sha"
+	@echo "make patch-go-version"
+	@echo
+	@echo "make learn-tools-shas"
+	@echo "make learn-image-shas"
