@@ -67,6 +67,11 @@ include modules/tools/00_mod.mk
 patch-go-version:
 	@./scripts/patch_go_version.sh
 
+.PHONY: upgrade-base-images
+upgrade-base-images: | $(NEEDS_CRANE)
+	@CRANE=$(CRANE) \
+		./scripts/upgrade_base_images.sh
+
 ## SHA learning targets
 
 .PHONY: learn-tools-shas
@@ -83,6 +88,7 @@ help: ## Show this help
 	@echo "Usage: make [target] ..."
 	@echo
 	@echo "make patch-go-version"
+	@echo "make upgrade-base-images"
 	@echo
 	@echo "make learn-tools-shas"
 	@echo "make learn-image-shas"
