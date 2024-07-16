@@ -98,6 +98,12 @@ learn-image-shas: | $(NEEDS_CRANE)
 	@CRANE=$(CRANE) \
 		./scripts/learn_image_shas.sh
 
+# Test targets
+
+.PHONY: test-e2e
+test-e2e:
+	@./tests/test_e2e.sh
+
 .PHONY: help
 help: ## Show this help
 	@echo "Usage: make [target] ..."
@@ -108,3 +114,5 @@ help: ## Show this help
 	@echo
 	@echo "make learn-tools-shas"
 	@echo "make learn-image-shas"
+	@echo
+	@echo "make test-e2e"
