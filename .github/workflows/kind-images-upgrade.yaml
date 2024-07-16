@@ -75,7 +75,7 @@ jobs:
             });
 
             if (pulls.data.length < 1) {
-              await github.rest.pulls.create({
+              const result = await github.rest.pulls.create({
                 title: '[CI] Bump kind images to latest available version on ' + process.env.SOURCE_BRANCH,
                 owner: owner,
                 repo: repo,
@@ -84,5 +84,11 @@ jobs:
                 body: [
                   'This PR is auto-generated to bump the kind images used by our tests',
                 ].join('\n'),
+              });
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: result.data.number,
+                labels: ['skip-review']
               });
             }
