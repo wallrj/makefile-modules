@@ -21,8 +21,8 @@
 
 ###################################################################################
 
-# Some modules build their dependencies from variables, we want these to be 
-# evalutated at the last possible moment. For this we use second expansion to 
+# Some modules build their dependencies from variables, we want these to be
+# evalutated at the last possible moment. For this we use second expansion to
 # re-evaluate the generate and verify targets a second time.
 #
 # See https://www.gnu.org/software/make/manual/html_node/Secondary-Expansion.html
@@ -97,6 +97,10 @@ learn-tools-shas: | $(NEEDS_CRANE)
 learn-image-shas: | $(NEEDS_CRANE)
 	@CRANE=$(CRANE) \
 		./scripts/learn_image_shas.sh
+
+.PHONY: verify-boilerplate
+verify-boilerplate: | $(NEEDS_BOILERSUITE)
+	$(BOILERSUITE) .
 
 # Test targets
 

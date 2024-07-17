@@ -1,3 +1,17 @@
+# Copyright 2024 The cert-manager Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # Utility functions
 fatal_if_undefined = $(if $(findstring undefined,$(origin $1)),$(error $1 is not set))
 
@@ -19,22 +33,22 @@ olm_openshift_version ?= v4.6
 
 # A mapping of git repos to push to when publishing, OLMs are published by PRing
 # into a RedHat repo.
-# 
+#
 # For example, to publish to the certified-operators repos you may do this:
 #   olm_publish_repos += redhat-openshift-ecosystem/certified-operators=jetstack/certified-operators
-# 
+#
 # Where the value on the left is the repo to PR into, and the one on the right is
 # where to push the changes to PR from
-olm_publish_repos ?= 
+olm_publish_repos ?=
 
 # Project ID is the components ID if publishing to the RedHat certified operators
 # program
 olm_project_id ?=
 
-# OLMs are built as images, so can be pushed to image registries. We default the 
-# tag to the version. 
+# OLMs are built as images, so can be pushed to image registries. We default the
+# tag to the version.
 #
-# If you wish to push to an OCI registry this can be done by setting 
+# If you wish to push to an OCI registry this can be done by setting
 # oci_olm_image_name to the name of the repository
 oci_olm_image_tag ?= $(VERSION)
 

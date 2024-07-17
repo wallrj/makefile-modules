@@ -1,3 +1,17 @@
+# Copyright 2024 The cert-manager Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # Utility variables
 current_makefile = $(lastword $(MAKEFILE_LIST))
 current_makefile_directory = $(dir $(current_makefile))
@@ -38,14 +52,14 @@ olm-bundle: $(helm_chart_archive) $(olm_clusterserviceversion_path) | $(NEEDS_HE
 		$(YQ) 'del(.metadata.creationTimestamp)' |\
 		$(YQ) - $(abspath $(olm_clusterserviceversion_path)) $(abspath $(olm_examples)) $(abspath $(olm_additional_manifests)) |\
 		$(OPERATOR-SDK) generate bundle --output-dir . --package $(olm_project_name) --version $(VERSION:v%=%)
-	
+
 	@# Set the container image annotation
-	$(YQ) -i '.metadata.annotations.containerImage = .spec.install.spec.deployments[0].spec.template.spec.containers[0].image' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
-	$(YQ) -i '.spec.relatedImages = [ .spec.install.spec.deployments[].spec.template.spec.containers[] | {"name": .name, "image": .image} ]' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
+	$(YQ) -i '.metadata.annotations.containerImage = .spec.install.spec.deployments[0].spec.template.spec.containers[0].image' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
+	$(YQ) -i '.spec.relatedImages = [ .spec.install.spec.deployments[].spec.template.spec.containers[] | {"name": .name, "image": .image} ]' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
 
 	@# Set the supported OS/Arches based on $(oci_platforms)
-	$(YQ) -i --string-interpolation '. * ("$(oci_platforms)" | [ split(",").[] | split("/") | ["operatorframework.io/os.\(.[0])", "operatorframework.io/arch.\(.[1])"] ] | [ .[][] ] | unique | .[] as $$item ireduce({}; . * {"metadata": {"labels": {$$item: "supported"}}}))' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml 
-	
+	$(YQ) -i --string-interpolation '. * ("$(oci_platforms)" | [ split(",").[] | split("/") | ["operatorframework.io/os.\(.[0])", "operatorframework.io/arch.\(.[1])"] ] | [ .[][] ] | unique | .[] as $$item ireduce({}; . * {"metadata": {"labels": {$$item: "supported"}}}))' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
+
 	@# Set the openshift version
 	$(YQ) -i '.annotations."com.redhat.openshift.versions"="$(olm_openshift_version)"' $(olm_bundle_dir)/metadata/annotations.yaml
 
@@ -57,7 +71,7 @@ olm-bundle: $(helm_chart_archive) $(olm_clusterserviceversion_path) | $(NEEDS_HE
 
 	@# Set the displayName and description of CRDs
 	$(YQ) eval-all -i '.spec.customresourcedefinitions.owned = [ select(.kind == "CustomResourceDefinition") | {"kind": .spec.names.kind$(comma) "name": .metadata.name$(comma) "displayName": .spec.names.kind$(comma) "version": (.spec.versions[] | select(.storage == true) | .name)$(comma)"description": (.spec.versions[] | select(.storage == true) | .schema.openAPIV3Schema.description)} ] | select(fi == 0)' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml $(olm_bundle_dir)/manifests/*.yaml
-	
+
 	@# Use folded style for long lines (lines cannot be longer than 180)
 	for file in $$(find $(olm_bundle_dir) -name "*.yaml"); do yq -i '(.. | select(tag == "!!str" and ([split("\n") | .[] | length | select(. > 150)] | length) != 0)) |= . style="folded"' $$file; done
 
@@ -66,7 +80,7 @@ olm-bundle: $(helm_chart_archive) $(olm_clusterserviceversion_path) | $(NEEDS_HE
 
 	@# Run through yamlfmt
 	$(YAMLFMT) -conf $(yamlfmt_config) $(olm_bundle_dir)/**/*.yaml
-	
+
 	@# Remove the bundle dockerfile
 	rm -f $(olm_bundle_dir)/bundle.Dockerfile
 
