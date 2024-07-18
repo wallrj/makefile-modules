@@ -2,14 +2,16 @@
 version: 2
 updates:
 - package-ecosystem: gomod
-  directory: /
+  directories:
+    - "**/*"
   schedule:
     interval: weekly
   groups:
     all:
       patterns: ["*"]
 - package-ecosystem: github-actions
-  directory: /
+  directories:
+    - "**/*"
   schedule:
     interval: weekly
   groups:
