@@ -45,6 +45,9 @@ olm_publish_repos ?=
 # program
 olm_project_id ?=
 
+# Used for handling auto-upgrade, the version that this release is replacing
+olm_replaces_version ?= $(shell git describe --tags --always --match='v*' --abbrev=0 --exclude $(VERSION))
+
 # OLMs are built as images, so can be pushed to image registries. We default the
 # tag to the version.
 #
