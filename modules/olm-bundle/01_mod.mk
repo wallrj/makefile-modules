@@ -53,6 +53,9 @@ olm-bundle: $(helm_chart_archive) $(olm_clusterserviceversion_path) | $(NEEDS_HE
 		$(YQ) - $(abspath $(olm_clusterserviceversion_path)) $(abspath $(olm_examples)) $(abspath $(olm_additional_manifests)) |\
 		$(OPERATOR-SDK) generate bundle --output-dir . --package $(olm_project_name) --version $(VERSION:v%=%)
 
+	@# Set the previous version in the replaces field, this is required for auto-upgrade to work
+	$(YQ) -i '.spec.replaces = "$(olm_project_name).$(olm_replaces_version)"' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
+
 	@# Set the container image annotation
 	$(YQ) -i '.metadata.annotations.containerImage = .spec.install.spec.deployments[0].spec.template.spec.containers[0].image' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
 	$(YQ) -i '.spec.relatedImages = [ .spec.install.spec.deployments[].spec.template.spec.containers[] | {"name": .name, "image": .image} ]' $(olm_bundle_dir)/manifests/$(olm_project_name).clusterserviceversion.yaml
@@ -94,7 +97,7 @@ oci-build-olm: olm-bundle | $(NEEDS_OLM-TO-OCI)
 # $2 fork
 define olm_publish_targets
 .PHONY: olm-publish-$(subst /,-,$1)
-olm-publish-$(subst /,-,$1): olm-bundle | $(NEEDS_GH) $(bin_dir)/scratch
+olm-publish-$(subst /,-,$1): olm-bundle | $(NEEDS_GH) $(NEEDS_YQ) $(bin_dir)/scratch
 	rm -rf $(bin_dir)/scratch/git/$2
 	mkdir -p $(bin_dir)/scratch/git/$(dir $2)
 	$(GH) repo clone $2 $(bin_dir)/scratch/git/$2
@@ -106,6 +109,7 @@ olm-publish-$(subst /,-,$1): olm-bundle | $(NEEDS_GH) $(bin_dir)/scratch
 		touch operators/$(olm_project_name)/ci.yaml && \
 		$(if $(and $(findstring redhat-openshift-ecosystem/certified-operators,$1),$(olm_project_id)), \
 			$(YQ) -i '.cert_project_id = "$(olm_project_id)"' operators/$(olm_project_name)/ci.yaml &&) \
+		$(YQ) -i '.updateGraph = "semver-mode"' operators/$(olm_project_name)/ci.yaml && \
 		git add operators/$(olm_project_name)/ci.yaml && \
 		git commit -m "operator $(olm_project_name) ($(VERSION))" && \
 		git -c "credential.helper=!$(GH) auth git-credential" push -f origin $(VERSION) && \
