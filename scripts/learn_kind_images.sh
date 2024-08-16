@@ -98,6 +98,7 @@ echo "" >> "${kind_versionfile}.tmp"
 
 release_json=$(curl -fsSL "https://api.github.com/repos/kubernetes-sigs/kind/releases/tags/${kind_version}"| jq '
   [ .body  | capture("- v?1\\.(?<minor>[0-9]+)(.(?<patch>[0-9]+))?: `kindest/node:v(?<version>[^@]+)@sha256:(?<sha256>[^`]+)`\r"; "g") ]
+  | group_by(.minor) | map(max_by(.patch))
   | sort_by(.minor)'
 )
 

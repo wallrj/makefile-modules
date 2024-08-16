@@ -33,6 +33,9 @@ bin_dir := _bin
 $(bin_dir) $(bin_dir)/scratch:
 	mkdir -p $@
 
+HOST_OS := unused
+HOST_ARCH := unused
+
 include modules/tools/00_mod.mk
 
 .PHONY: print-kind-version
