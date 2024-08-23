@@ -22,7 +22,7 @@ olm_base_dir := $(current_makefile_directory)/base
 
 ifdef deploy_name
 # Name of the project, this goes in the PROJECT file as well as getting used.
-# $(deploy_name) is usally a sane default for this value
+# $(deploy_name) is usually a sane default for this value
 olm_project_name ?= $(deploy_name)
 endif
 
