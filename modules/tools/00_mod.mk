@@ -181,7 +181,7 @@ CURL := curl --silent --show-error --fail --location --retry 10 --retry-connrefu
 
 # LN is expected to be an atomic action, meaning that two Make processes
 # can run the "link $(DOWNLOAD_DIR)/tools/xxx@$(XXX_VERSION)_$(HOST_OS)_$(HOST_ARCH)
-# to $(bin_dir)/tools/xxx" operation simulatiously without issues (both
+# to $(bin_dir)/tools/xxx" operation simultaneously without issues (both
 # will perform the action and the second time the link will be overwritten).
 LN := ln -fs
 
