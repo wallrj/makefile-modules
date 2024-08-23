@@ -36,7 +36,7 @@ for_each_kv = $(foreach item,$2,$(eval $(call $1,$(word 1,$(subst =, ,$(item))),
 # $(bin_dir)/tools, and the actual binaries are in $(bin_dir)/downloaded. When bumping
 # the version of the tools, this symlink gets updated.
 
-# Let's have $(bin_dir)/tools in front of the PATH so that we don't inavertedly
+# Let's have $(bin_dir)/tools in front of the PATH so that we don't inadvertently
 # pick up the wrong binary somewhere. Watch out, $(shell echo $$PATH) will
 # still print the original PATH, since GNU make does not honor exported
 # variables: https://stackoverflow.com/questions/54726457
