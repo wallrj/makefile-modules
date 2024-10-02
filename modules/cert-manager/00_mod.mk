@@ -15,7 +15,7 @@
 images_amd64 ?=
 images_arm64 ?=
 
-cert_manager_version := v1.15.3
+cert_manager_version := v1.16.0
 
 images_amd64 += quay.io/jetstack/cert-manager-controller:$(cert_manager_version)@sha256:631ba2b3bf7be0bd0d446b8bfcbeb56f8fe735cd02a267567a8d94682d03165b
 images_amd64 += quay.io/jetstack/cert-manager-cainjector:$(cert_manager_version)@sha256:6802c6afea2da91f5782880b79008179bb98147a23ce00f3cab5ba799807b5d6
