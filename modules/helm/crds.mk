@@ -37,29 +37,29 @@ ifeq ($(HOST_OS),darwin)
 	sed_inplace := sed -i ''
 endif
 
-crds_dir ?= config/crd/bases
-
 .PHONY: generate-crds
 ## Generate CRD manifests.
 ## @category [shared] Generate/ Verify
 generate-crds: | $(NEEDS_CONTROLLER-GEN) $(NEEDS_YQ)
+	$(eval crds_gen_temp := $(bin_dir)/scratch/crds)
 	$(eval directories := $(shell ls -d */ | grep -v -e 'make' $(shell git check-ignore -- * | sed 's/^/-e /')))
 
-	mkdir -p $(crds_dir)
+	rm -rf $(crds_gen_temp)
+	mkdir -p $(crds_gen_temp)
 
 	$(CONTROLLER-GEN) crd \
 		$(directories:%=paths=./%...) \
-		output:crd:artifacts:config=$(crds_dir)
+		output:crd:artifacts:config=$(crds_gen_temp)
 
 	echo "Updating CRDs with helm templating, writing to $(helm_chart_source_dir)/templates"
 
-	@for i in $$(ls $(crds_dir)); do \
-		crd_name=$$($(YQ) eval '.metadata.name' $(crds_dir)/$$i); \
+	@for i in $$(ls $(crds_gen_temp)); do \
+		crd_name=$$($(YQ) eval '.metadata.name' $(crds_gen_temp)/$$i); \
 		cat $(crd_template_header) > $(helm_chart_source_dir)/templates/crd-$$i; \
 		echo "" >> $(helm_chart_source_dir)/templates/crd-$$i; \
 		$(sed_inplace) "s/REPLACE_CRD_NAME/$$crd_name/g" $(helm_chart_source_dir)/templates/crd-$$i; \
 		$(sed_inplace) "s/REPLACE_LABELS_TEMPLATE/$(helm_labels_template_name)/g" $(helm_chart_source_dir)/templates/crd-$$i; \
-		$(YQ) -I2 '{"spec": .spec}' $(crds_dir)/$$i >> $(helm_chart_source_dir)/templates/crd-$$i; \
+		$(YQ) -I2 '{"spec": .spec}' $(crds_gen_temp)/$$i >> $(helm_chart_source_dir)/templates/crd-$$i; \
 		cat $(crd_template_footer) >> $(helm_chart_source_dir)/templates/crd-$$i; \
 	done
 
