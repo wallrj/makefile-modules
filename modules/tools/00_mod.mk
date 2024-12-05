@@ -600,8 +600,8 @@ $(DOWNLOAD_DIR)/tools/istioctl@$(ISTIOCTL_VERSION)_$(HOST_OS)_$(HOST_ARCH): | $(
 		chmod +x $(outfile); \
 		rm $(outfile).tar.gz
 
-preflight_linux_amd64_SHA256SUM=97750df31f31200f073e3b2844628a0a3681a403648c76d12319f83c80666104
-preflight_linux_arm64_SHA256SUM=e12b2afe063c07ee75f69f285f8cc56be99b85e2abac99cbef5fb22b91ef0cb7
+preflight_linux_amd64_SHA256SUM=776d04669304d3185c40522bed9a6dc1aa9cd80014a203fe01552b98bfa9554b
+preflight_linux_arm64_SHA256SUM=dd7b0a144892ce6fc47d1bc44e344130fa9ff997bf2c39de3016873d8bd3fac5
 
 # Currently there are no official releases for darwin, you cannot submit results
 # on non-official binaries, but we can still run tests.
