@@ -67,4 +67,4 @@ sed "${sed_args[@]}" "s/^VENDORED_GO_VERSION := $LOCAL_VERSION$/VENDORED_GO_VERS
 
 echo "update go sha"
 
-"${script_dir}/learn_tools_shas.sh" vendor-go
+"${script_dir}/learn_tools_shas.sh" _bin/tools/go
