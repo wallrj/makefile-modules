@@ -50,6 +50,6 @@ oci-license-layer-%: | $(bin_dir)/scratch $$(NEEDS_GO-LICENSES)
 # Add the license layer to every image
 define licences_layer_dependencies
 oci-build-$1: oci-license-layer-$1
-oci_additional_layers_$1 += $(license_layer_path_$1)
+oci_$1_additional_layers += $(license_layer_path_$1)
 endef
 $(foreach build_name,$(build_names),$(eval $(call licences_layer_dependencies,$(build_name))))
