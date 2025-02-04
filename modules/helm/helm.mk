@@ -77,8 +77,7 @@ $(helm_chart_archive): $(helm_chart_sources) | $(NEEDS_HELM) $(NEEDS_YQ) $(bin_d
 ## @category [shared] Publish
 helm-chart-oci-push: $(helm_chart_archive) | $(NEEDS_HELM) $(NEEDS_CRANE)
 	$(HELM) push "$(helm_chart_archive)" "oci://$(helm_chart_image_registry)" 2>&1 \
-		| grep -o "sha256:.\+" \
-		| tee $(helm_digest_path)
+		| tee >(grep -o "sha256:.\+" | tee $(helm_digest_path))
 
 	helm_digest=$$(cat $(helm_digest_path)) && \
 	$(CRANE) copy "$(helm_chart_image_name)@$$helm_digest" "$(helm_chart_image_name):$(helm_chart_image_tag:v%=%)"
