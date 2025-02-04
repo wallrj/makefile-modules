@@ -78,7 +78,9 @@ $(helm_chart_archive): $(helm_chart_sources) | $(NEEDS_HELM) $(NEEDS_YQ) $(bin_d
 helm-chart-oci-push: $(helm_chart_archive) | $(NEEDS_HELM) $(NEEDS_CRANE)
 	$(HELM) push "$(helm_chart_archive)" "oci://$(helm_chart_image_registry)" 2>&1 \
 		| tee >(grep -o "sha256:.\+" | tee $(helm_digest_path))
-
+	
+	@# $(helm_chart_image_tag:v%=%) removes the v prefix from the value stored in helm_chart_image_tag.
+	@# See https://www.gnu.org/software/make/manual/html_node/Substitution-Refs.html for the manual on the syntax.
 	helm_digest=$$(cat $(helm_digest_path)) && \
 	$(CRANE) copy "$(helm_chart_image_name)@$$helm_digest" "$(helm_chart_image_name):$(helm_chart_image_tag:v%=%)"
 
