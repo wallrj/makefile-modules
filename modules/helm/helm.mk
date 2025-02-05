@@ -80,7 +80,8 @@ helm-chart-oci-push: $(helm_chart_archive) | $(NEEDS_HELM) $(NEEDS_CRANE)
 		| grep -o "sha256:.\+" \
 		| tee $(helm_digest_path)
 
-	$(CRANE) copy "$(helm_chart_image_name)@$(call helm_digest)" "$(helm_chart_image_name):$(helm_chart_image_tag:v%=%)"
+	helm_digest=$$(cat $(helm_digest_path)) && \
+	$(CRANE) copy "$(helm_chart_image_name)@$$helm_digest" "$(helm_chart_image_name):$(helm_chart_image_tag:v%=%)"
 
 .PHONY: helm-chart
 ## Create a helm chart
