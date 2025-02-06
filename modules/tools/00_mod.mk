@@ -21,7 +21,7 @@ endif
 export DOWNLOAD_DIR ?= $(CURDIR)/$(bin_dir)/downloaded
 export GOVENDOR_DIR ?= $(CURDIR)/$(bin_dir)/go_vendor
 
-$(bin_dir)/scratch/image $(bin_dir)/tools $(DOWNLOAD_DIR)/tools:
+$(bin_dir)/tools $(DOWNLOAD_DIR)/tools:
 	@mkdir -p $@
 
 checkhash_script := $(dir $(lastword $(MAKEFILE_LIST)))/util/checkhash.sh
