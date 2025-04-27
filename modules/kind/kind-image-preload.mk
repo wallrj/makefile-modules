@@ -34,15 +34,13 @@ images_tar_dir := $(bin_dir)/downloaded/containers/$(IMAGE_ARCH)
 images_tars := $(foreach image,$(images),$(images_tar_dir)/$(subst :,+,$(image)).tar)
 
 # Download the images as tarballs. After downloading the image using
-# its digest, we untar the image and modify the .[0].RepoTags[0] value in
+# its digest, we use image-tool to modify the .[0].RepoTags[0] value in
 # the manifest.json file to have the correct tag (instead of "i-was-a-digest"
 # which is set when the image is pulled using its digest). This tag is used
 # to reference the image after it has been imported using docker or kind. Otherwise,
 # the image would be imported with the tag "i-was-a-digest" which is not very useful.
 # We would have to use digests to reference the image everywhere which might
 # not always be possible and does not match the default behavior of eg. our helm charts.
-# Untarring and modifying manifest.json is a hack and we hope that crane adds an option
-# in the future that allows setting the tag on images that are pulled by digest.
 # NOTE: the tag is fully determined based on the input, we fully allow the remote
 # tag to point to a different digest. This prevents CI from breaking due to upstream
 # changes. However, it also means that we can incorrectly combine digests with tags,
