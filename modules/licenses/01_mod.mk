@@ -41,7 +41,11 @@ endef
 
 # Calculate all the go.mod directories, build targets may share go.mod dirs so
 # we use $(sort) to de-duplicate.
-go_mod_dirs := $(sort $(foreach build_name,$(build_names),$(go_$(build_name)_mod_dir)))
+go_mod_dirs := $(foreach build_name,$(build_names),$(go_$(build_name)_mod_dir))
+ifneq ("$(wildcard go.mod)","")
+    go_mod_dirs += .
+endif
+go_mod_dirs := $(sort $(go_mod_dirs))
 $(foreach go_mod_dir,$(go_mod_dirs),$(eval $(call licenses_target,$(go_mod_dir))))
 
 ###################### Include LICENSES in OCI image ######################
