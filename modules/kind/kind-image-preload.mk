@@ -29,10 +29,9 @@ endif
 IMAGE_ARCH ?= $(HOST_ARCH)
 
 images := $(images_$(IMAGE_ARCH))
-images_files := $(foreach image,$(images),$(subst :,+,$(image)))
 
 images_tar_dir := $(bin_dir)/downloaded/containers/$(IMAGE_ARCH)
-images_tars := $(images_files:%=$(images_tar_dir)/%.tar)
+images_tars := $(foreach image,$(images),$(images_tar_dir)/$(subst :,+,$(image)).tar)
 
 # Download the images as tarballs. After downloading the image using
 # its digest, we untar the image and modify the .[0].RepoTags[0] value in
@@ -57,17 +56,18 @@ $(images_tars): $(images_tar_dir)/%.tar: | $(NEEDS_IMAGE-TOOL) $(NEEDS_CRANE) $(
 	$(CRANE) pull "$(bare_image)@$(digest)" $@ --platform=linux/$(IMAGE_ARCH)
 	$(IMAGE-TOOL) tag-docker-tar $@ "$(bare_image):$(tag)"
 
-images_tar_envs := $(images_files:%=env-%)
+# $1 = image
+# $2 = image:tag@sha256:digest
+define image_variables
+$1.TAR      := $(images_tar_dir)/$(subst :,+,$2).tar
+$1.REPO     := $1
+$1.TAG      := $(word 2,$(subst :, ,$(word 1,$(subst @, ,$2))))
+$1.FULL     := $(word 1,$(subst @, ,$2))
+endef
 
-.PHONY: $(images_tar_envs)
-$(images_tar_envs): env-%: $(images_tar_dir)/%.tar | $(NEEDS_GOJQ)
-	@$(eval image_without_tag=$(shell cut -d+ -f1 <<<"$*"))
-	@$(eval $(image_without_tag).TAR="$(images_tar_dir)/$*.tar")
-	@$(eval $(image_without_tag).REPO=$(shell tar xfO "$(images_tar_dir)/$*.tar" manifest.json | $(GOJQ) '.[0].RepoTags[0]' -r | cut -d: -f1))
-	@$(eval $(image_without_tag).TAG=$(shell tar xfO "$(images_tar_dir)/$*.tar" manifest.json | $(GOJQ) '.[0].RepoTags[0]' -r | cut -d: -f2))
-	@$(eval $(image_without_tag).FULL=$($(image_without_tag).REPO):$($(image_without_tag).TAG))
+$(foreach image,$(images),$(eval $(call image_variables,$(word 1,$(subst :, ,$(image))),$(image))))
 
 .PHONY: images-preload
 ## Preload images.
 ## @category [shared] Kind cluster
-images-preload: | $(images_tar_envs)
+images-preload: | $(images_tars)
