@@ -37,6 +37,9 @@ $1/LICENSES: $1/go.mod $(licenses_go_work) | $(NEEDS_GO-LICENSES)
 		$(GO-LICENSES) report --ignore "$$(license_ignore)" ./... > LICENSES
 
 generate-go-licenses: $1/LICENSES
+# The /LICENSE targets make sure these files exist.
+# Otherwise, make will error.
+generate-go-licenses: $1/LICENSE
 endef
 
 # Calculate all the go.mod directories, build targets may share go.mod dirs so
@@ -58,7 +61,7 @@ license_layer_path_$1 := $$(abspath $(bin_dir)/scratch/licenses-$1)
 oci-license-layer-$1: | $(bin_dir)/scratch $(NEEDS_GO-LICENSES)
 	rm -rf $$(license_layer_path_$1)
 	mkdir -p $$(license_layer_path_$1)/licenses
-	cp LICENSE $$(license_layer_path_$1)/licenses/LICENSE
+	cp $$(go_$1_mod_dir)/LICENSE $$(license_layer_path_$1)/licenses/LICENSE
 	cp $$(go_$1_mod_dir)/LICENSES $$(license_layer_path_$1)/licenses/LICENSES
 
 oci-build-$1: oci-license-layer-$1
