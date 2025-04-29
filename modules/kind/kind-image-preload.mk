@@ -26,11 +26,9 @@ endif
 
 ##########################################
 
-IMAGE_ARCH ?= $(HOST_ARCH)
+images := $(images_$(HOST_ARCH))
 
-images := $(images_$(IMAGE_ARCH))
-
-images_tar_dir := $(bin_dir)/downloaded/containers/$(IMAGE_ARCH)
+images_tar_dir := $(bin_dir)/downloaded/containers/$(HOST_ARCH)
 images_tars := $(foreach image,$(images),$(images_tar_dir)/$(subst :,+,$(image)).tar)
 
 # Download the images as tarballs. After downloading the image using
@@ -51,7 +49,7 @@ $(images_tars): $(images_tar_dir)/%.tar: | $(NEEDS_IMAGE-TOOL) $(NEEDS_CRANE) $(
 	@$(eval digest=$(word 2,$(subst @, ,$(full_image))))
 	@$(eval tag=$(word 2,$(subst :, ,$(word 1,$(subst @, ,$(full_image))))))
 	@mkdir -p $(dir $@)
-	$(CRANE) pull "$(bare_image)@$(digest)" $@ --platform=linux/$(IMAGE_ARCH)
+	$(CRANE) pull "$(bare_image)@$(digest)" $@ --platform=linux/$(HOST_ARCH)
 	$(IMAGE-TOOL) tag-docker-tar $@ "$(bare_image):$(tag)"
 
 # $1 = image
