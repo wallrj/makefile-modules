@@ -100,22 +100,3 @@ $(oci_scan_targets): oci-scan-%: docker-tarball-% | $(NEEDS_TRIVY)
 ## fixable vulnerabilities of severity MEDIUM, HIGH or CRITICAL are found.
 ## @category [shared] Build
 oci-security-scan: $(oci_scan_targets)
-
-ifndef dont_generate_oci_security_scan
-
-oci_security_scan_base_dir := $(dir $(lastword $(MAKEFILE_LIST)))/base/
-
-.PHONY: generate-oci-security-scan
-## Generate the scheduled GitHub Actions workflow which periodically runs
-## oci-security-scan against the release branches and the latest release tag.
-## @category [shared] Generate/ Verify
-generate-oci-security-scan:
-	cp -r $(oci_security_scan_base_dir)/. ./
-	cd $(oci_security_scan_base_dir) && \
-		find . -type f | while read file; do \
-			sed "s|{{REPLACE:GH-REPOSITORY}}|$(repo_name:github.com/%=%)|g" "$$file" > "$(CURDIR)/$$file"; \
-		done
-
-shared_generate_targets += generate-oci-security-scan
-
-endif # dont_generate_oci_security_scan
