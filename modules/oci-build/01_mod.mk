@@ -91,6 +91,7 @@ $(docker_tarball_targets): docker-tarball-%: oci-build-%__local | $(NEEDS_GO) $(
 $(oci_scan_targets): oci-scan-%: docker-tarball-% | $(NEEDS_TRIVY)
 	$(TRIVY) image \
 		--input $(docker_tarball_path_$*) \
+		--scanners vuln \
 		--severity MEDIUM,HIGH,CRITICAL \
 		--ignore-unfixed \
 		--exit-code 1
