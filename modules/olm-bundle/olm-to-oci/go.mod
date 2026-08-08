@@ -3,7 +3,7 @@ module olm-to-oci
 go 1.25.7
 
 require (
-	github.com/google/go-containerregistry v0.21.8
+	github.com/google/go-containerregistry v0.21.9
 	gopkg.in/yaml.v3 v3.0.1
 )
 
