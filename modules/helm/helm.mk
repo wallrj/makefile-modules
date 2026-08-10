@@ -190,13 +190,18 @@ verify-helm-kubeconform: $(helm_chart_archive) | $(NEEDS_KUBECONFORM)
 
 shared_verify_targets_dirty += verify-helm-kubeconform
 
+## Diff the locally built Helm chart against a released version,
+## ignoring version-label noise. Set helm_chart_old_version to the
+## previously released chart version to compare against.
+## @category [shared] Helm Chart
 .PHONY: helm-diff
 helm-diff: $(helm_chart_archive) | $(NEEDS_HELM)
 	@if [ -z "$(helm_chart_old_version)" ]; then \
 		echo "Usage: make helm-diff helm_chart_old_version=<version>"; \
 		exit 1; \
 	fi
+	@$(HELM) show chart "oci://$(helm_chart_image_registry)$(helm_chart_name)" --version "$(helm_chart_old_version)" > /dev/null
 	@diff -u \
-		<($(HELM) template "oci://$(helm_chart_image_registry)$(helm_chart_name)" --version "$(helm_chart_old_version)" | grep -vE '$(HELM_IGNORE_FIELDS)') \
-		<($(HELM) template "$(helm_chart_archive)" | grep -vE '$(HELM_IGNORE_FIELDS)') \
-		|| true
+		<($(HELM) template "oci://$(helm_chart_image_registry)$(helm_chart_name)" --version "$(helm_chart_old_version)" $(INSTALL_OPTIONS) | grep -vE -- '$(HELM_IGNORE_FIELDS)') \
+		<($(HELM) template "$(helm_chart_archive)" $(INSTALL_OPTIONS) | grep -vE -- '$(HELM_IGNORE_FIELDS)') \
+		|| [ $$? -eq 1 ]
