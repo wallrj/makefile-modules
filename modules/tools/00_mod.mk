@@ -135,7 +135,7 @@ tools += gojq=v0.12.19
 tools += crane=v0.21.9
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go?tab=versions
 # renovate: datasource=go packageName=google.golang.org/protobuf
-tools += protoc-gen-go=v1.36.11
+tools += protoc-gen-go=v1.36.12
 # https://pkg.go.dev/github.com/sigstore/cosign/v2/cmd/cosign?tab=versions
 # renovate: datasource=go packageName=github.com/sigstore/cosign/v2
 tools += cosign=v2.6.5
@@ -163,7 +163,7 @@ tools += klone=v0.3.0
 tools += goreleaser=v2.17.1
 # https://pkg.go.dev/github.com/anchore/syft/cmd/syft?tab=versions
 # renovate: datasource=go packageName=github.com/anchore/syft
-tools += syft=v1.50.0
+tools += syft=v1.51.0
 # https://github.com/cert-manager/helm-tool/releases
 # renovate: datasource=github-releases packageName=cert-manager/helm-tool
 tools += helm-tool=v0.6.0
