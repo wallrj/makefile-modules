@@ -12,34 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-golangci_lint_timeout ?= 10m
+ifndef kube_api_linter_config
+$(error kube_api_linter_config is not set)
+endif
+
+kube_api_linter_timeout ?= 10m
 
 .PHONY: verify-kube-api-lint
-## Verify all APIs using Kube API Linter
+## Verify Kubernetes API types using Kube API Linter
 ## @category [shared] Generate/ Verify
-verify-kube-api-lint: | $(NEEDS_GO) $(NEEDS_GOLANGCI-LINT-KUBE) $(bin_dir)/scratch
-	@find . -name go.mod -not \( -path "./$(bin_dir)/*" -or -path "./make/_shared/*" \) \
-		| while read d; do \
-				target=$$(dirname $${d}); \
-				echo "Running 'GOVERSION=$(VENDORED_GO_VERSION) $(bin_dir)/tools/golangci-lint run -c $(CURDIR)/$(golangci_lint_kube_config) --timeout $(golangci_lint_timeout)' in directory '$${target}'"; \
-				pushd "$${target}" >/dev/null; \
-				GOVERSION=$(VENDORED_GO_VERSION) $(GOLANGCI-LINT-KUBE) run -c $(CURDIR)/$(golangci_lint_kube_config) --timeout $(golangci_lint_timeout) || exit; \
-				popd >/dev/null; \
-				echo ""; \
-			done
+verify-kube-api-lint: | $(NEEDS_GO) $(NEEDS_KUBE-API-LINTER)
+	GOVERSION=$(VENDORED_GO_VERSION) $(KUBE-API-LINTER) run -c $(CURDIR)/$(kube_api_linter_config) --timeout $(kube_api_linter_timeout)
 
 shared_verify_targets_dirty += verify-kube-api-lint
 
 .PHONY: fix-kube-api-lint
-## Fix all APIs using Kube API Linter
+## Fix Kubernetes API types using Kube API Linter
 ## @category [shared] Generate/ Verify
-fix-kube-api-lint: | $(NEEDS_GO) $(NEEDS_GOLANGCI-LINT-KUBE) $(bin_dir)/scratch
-	@find . -name go.mod -not \( -path "./$(bin_dir)/*" -or -path "./make/_shared/*" \) \
-		| while read d; do \
-				target=$$(dirname $${d}); \
-				echo "Running 'GOVERSION=$(VENDORED_GO_VERSION) $(bin_dir)/tools/golangci-lint run --fix -c $(CURDIR)/$(golangci_lint_kube_config) --timeout $(golangci_lint_timeout)' in directory '$${target}'"; \
-				pushd "$${target}" >/dev/null; \
-				GOVERSION=$(VENDORED_GO_VERSION) $(GOLANGCI-LINT-KUBE) run --fix -c $(CURDIR)/$(golangci_lint_kube_config) --timeout $(golangci_lint_timeout) || exit; \
-				popd >/dev/null; \
-				echo ""; \
-			done
+fix-kube-api-lint: | $(NEEDS_GO) $(NEEDS_KUBE-API-LINTER)
+	GOVERSION=$(VENDORED_GO_VERSION) $(KUBE-API-LINTER) run --fix -c $(CURDIR)/$(kube_api_linter_config) --timeout $(kube_api_linter_timeout)

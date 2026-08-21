@@ -22,6 +22,7 @@ modules_to_copy+=(
     "go"
     "help"
     "kind"
+    "kube-api-linter"
     "oci-build"
     "oci-publish"
     "repository-base"
