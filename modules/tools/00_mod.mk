@@ -70,7 +70,7 @@ NEEDS_CTR = __require-ctr
 tools :=
 # https://github.com/helm/helm/releases
 # renovate: datasource=github-releases packageName=helm/helm
-tools += helm=v4.2.4
+tools += helm=v4.3.0
 # https://github.com/helm-unittest/helm-unittest/releases
 # renovate: datasource=github-releases packageName=helm-unittest/helm-unittest
 tools += helm-unittest=v1.1.2
@@ -538,10 +538,10 @@ $(DOWNLOAD_DIR)/tools/go@$(VENDORED_GO_VERSION)_$(HOST_OS)_$(HOST_ARCH).tar.gz: 
 		$(CURL) https://go.dev/dl/go$(VENDORED_GO_VERSION).$(HOST_OS)-$(HOST_ARCH).tar.gz -o $(outfile); \
 		$(checkhash_script) $(outfile) $(go_$(HOST_OS)_$(HOST_ARCH)_SHA256SUM)
 
-helm_linux_amd64_SHA256SUM=c306b46f719b0a4da32d0f78ee21bf90ce8d602f15b22ab753f0674d1670a7f3
-helm_linux_arm64_SHA256SUM=564de2191b881e9f71b5606b25345821ea1682f06ab90499d3ab22b530176da1
-helm_darwin_amd64_SHA256SUM=6c163d687ca03c3b5c01928e53bbbcf9518278f47ce7a2f249a5a08e8bdaa2bc
-helm_darwin_arm64_SHA256SUM=d747eb4e28bd2727173d15b759fa0a17822291ec09db7ced3d55af290a3661a2
+helm_linux_amd64_SHA256SUM=86584a54def73570558f66f5111cc53dfed56689637ae32c1201205d494f54fb
+helm_linux_arm64_SHA256SUM=31c5794dd55c66a51e6b7d2e2ac7a114ae8b1de41ff1d9ba51748ac973b06a08
+helm_darwin_amd64_SHA256SUM=347a784877e0e20eac865e8d1c36a80f6bb0861d6f29abd34defb6570ef95d92
+helm_darwin_arm64_SHA256SUM=d3870437e1e95b67f8edbde964156c84a26503f560821d40c542441658934fba
 
 .PRECIOUS: $(DOWNLOAD_DIR)/tools/helm@$(HELM_VERSION)_$(HOST_OS)_$(HOST_ARCH)
 $(DOWNLOAD_DIR)/tools/helm@$(HELM_VERSION)_$(HOST_OS)_$(HOST_ARCH): | $(DOWNLOAD_DIR)/tools
