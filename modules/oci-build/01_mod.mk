@@ -135,5 +135,7 @@ oci-scan-extra-images: | $(NEEDS_TRIVY)
 ## Scan all the OCI images built by this repository, and any extra images
 ## listed in oci_scan_extra_images, for known vulnerabilities; failing if any
 ## fixable vulnerabilities of severity MEDIUM, HIGH or CRITICAL are found.
+## Every image is scanned and reported, even when an earlier scan fails.
 ## @category [shared] Build
-oci-security-scan: $(oci_scan_targets) oci-scan-extra-images
+oci-security-scan:
+	$(MAKE) --keep-going $(oci_scan_targets) oci-scan-extra-images
