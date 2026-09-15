@@ -79,11 +79,12 @@ jobs:
 
       # Only repositories which build OCI images have the oci-security-scan
       # target; older release branches and tags may not have it yet either.
-      # --keep-going so that one vulnerable image does not prevent the
-      # remaining images from being scanned and reported.
-      - run: |
+      # Run even when govulncheck fails: both scans usually point at the
+      # same fix, so the image report is most useful when the Go report fails.
+      - if: ${{ !cancelled() }}
+        run: |
           if make --dry-run oci-security-scan >/dev/null 2>&1; then
-            make --keep-going oci-security-scan
+            make oci-security-scan
           else
             echo "::notice::The oci-security-scan target does not exist on ${{ matrix.ref }}; skipping."
           fi
